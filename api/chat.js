@@ -23,8 +23,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Babu GEMINI_API_KEY a Vercel Settings.' });
     }
 
-    // Amfani da sabon model gemini-2.0-flash
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    // Sabunta model zuwa gemini-3.6-flash
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
