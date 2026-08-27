@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - APK Builder</title>
+  <title>Center App AI - Native APK Builder</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -16,10 +16,12 @@
     textarea { height: 100px; resize: none; }
     .btn-build { width: 100%; background: #0284c7; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .btn-build:hover { background: #0369a1; }
+    .btn-build:disabled { background: #475569; cursor: not-allowed; }
     #outputArea { margin-top: 25px; display: none; flex-direction: column; gap: 15px; }
     iframe { width: 100%; height: 350px; background: white; border: 2px solid #334155; border-radius: 10px; }
-    .btn-apk { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
-    .btn-apk:hover { background: #16a34a; }
+    .btn-apk-download { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+    .btn-apk-download:hover { background: #16a34a; }
+    .instructions { background: #0f172a; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; border-left: 3px solid #38bdf8; }
   </style>
 </head>
 <body>
@@ -30,11 +32,11 @@
   </header>
 
   <div class="container">
-    <label for="appNameInput">Sunan App dinka da Tambari (Icon):</label>
-    <input type="text" id="appNameInput" placeholder="Misali: My Finance App" value="Center App">
+    <label for="appNameInput">Sunan App dinka da za ya fito a Fuskar Waya:</label>
+    <input type="text" id="appNameInput" placeholder="Misali: My Expense Tracker" value="My App">
 
     <label for="promptInput">Bada bayanin kowane irin App dake kike son gina:</label>
-    <textarea id="promptInput" placeholder="Misali: Gina min cikakken App na kula da harkokin kudi mai zane-zane..."></textarea>
+    <textarea id="promptInput" placeholder="Misali: Gina min cikakken App na kula da harkokin kudi..."></textarea>
     
     <button class="btn-build" id="buildBtn" onclick="generateApp()">🏗️ Kirkiro App Yanzu</button>
 
@@ -42,18 +44,22 @@
       <div style="color:#38bdf8; font-weight:bold;">📱 Gwada App Din Ka (Live Preview):</div>
       <iframe id="appFrame"></iframe>
       
-      <button class="btn-apk" onclick="downloadApkPackage()">📲 Sauke App Din A Waya (Maida shi APK)</button>
+      <div class="instructions">
+        📌 <strong>Hanyar Samun Ainihin APK File:</strong> Danna maballin green na kasa don sauke fayil din HTML, sannan gidan converter za ya bude don baka ainihin fayil din <strong>.APK</strong> daka iya turawa kowa a WhatsApp ko sakawa a cikin App Menu dinka.
+      </div>
+
+      <button class="btn-apk-download" onclick="downloadAppAndConvert()">📲 Sauke Fayil Din & Maida Shi APK</button>
     </div>
   </div>
 
 <script>
-let fullHtmlCode = "";
+let compiledCode = "";
 let currentAppName = "My_App";
 
 async function generateApp() {
   const prompt = document.getElementById('promptInput').value.trim();
-  const appName = document.getElementById('appNameInput').value.trim() || "Center App";
-  currentAppName = appName.replace(/\s+/g, '_');
+  const appName = document.getElementById('appNameInput').value.trim() || "My App";
+  currentAppName = appName;
   
   const buildBtn = document.getElementById('buildBtn');
   const outputArea = document.getElementById('outputArea');
@@ -65,23 +71,23 @@ async function generateApp() {
   }
 
   buildBtn.disabled = true;
-  buildBtn.textContent = "⏳ AI Yana gina App din tare da tsarin APK...";
+  buildBtn.textContent = "⏳ AI Yana gina App din...";
   outputArea.style.display = "none";
 
-  const systemInstruction = `You are a professional Android WebApp creator. Generate a SINGLE valid HTML document containing CSS, JS, and PWA Web Manifest metadata with icons so it can be converted into an Android APK directly. App Name: "${appName}". Return ONLY raw valid HTML code without markdown tags.`;
+  const systemInstruction = `You are a professional web app creator. Generate a SINGLE complete HTML file with embedded CSS and JS. DO NOT use markdown codeblock tags.`;
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `${systemInstruction}\nUser prompt: ${prompt}` })
+      body: JSON.stringify({ message: `${systemInstruction}\nApp Request: ${prompt}` })
     });
 
     const data = await res.json();
 
     if (res.ok && data.reply) {
-      fullHtmlCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      frame.srcdoc = fullHtmlCode;
+      compiledCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+      frame.srcdoc = compiledCode;
       outputArea.style.display = "flex";
     } else {
       alert("❌ " + (data.error || "An samu kuskure."));
@@ -94,21 +100,20 @@ async function generateApp() {
   }
 }
 
-function downloadApkPackage() {
-  if (!fullHtmlCode) return;
+function downloadAppAndConvert() {
+  if (!compiledCode) return;
 
-  // 1. Sauke HTML File
-  const blob = new Blob([fullHtmlCode], { type: "text/html;charset=utf-8" });
+  // 1. Sauke Fayil din HTML
+  const blob = new Blob([compiledCode], { type: "text/html;charset=utf-8" });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `${currentAppName}.html`;
+  link.download = `${currentAppName.replace(/\s+/g, '_')}.html`;
   link.click();
 
-  // 2. Tura mutum zuwa shafin converter domin maida shi APK a danna daya
+  // 2. Buɗe WebIntoApp Converter
   setTimeout(() => {
-    alert(`💡 Don samun fayil din .APK mai tambari:\n\n1. An sauke '${currentAppName}.html' a wayarka.\n2. Yanzu shafin WebIntoApp zai buɗe - saka fayil din da sunan app din ka don sauke ainihin APK!`);
     window.open('[https://www.webintoapp.com](https://www.webintoapp.com)', '_blank');
-  }, 1000);
+  }, 800);
 }
 </script>
 
