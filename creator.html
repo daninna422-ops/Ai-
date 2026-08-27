@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Native APK Builder</title>
+  <title>Center App AI - Builder</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -19,24 +19,24 @@
     .btn-build:disabled { background: #475569; cursor: not-allowed; }
     #outputArea { margin-top: 25px; display: none; flex-direction: column; gap: 15px; }
     iframe { width: 100%; height: 350px; background: white; border: 2px solid #334155; border-radius: 10px; }
-    .btn-apk-download { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
-    .btn-apk-download:hover { background: #16a34a; }
-    .instructions { background: #0f172a; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; border-left: 3px solid #38bdf8; }
+    .btn-box { display: flex; flex-direction: column; gap: 10px; }
+    .btn-download { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+    .btn-converter { background: #eab308; color: #0f172a; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🛠️ Center App APK Generator</h1>
+    <h1>🛠️ Center App Generator</h1>
     <a href="index.html">💬 Koma Chat</a>
   </header>
 
   <div class="container">
-    <label for="appNameInput">Sunan App dinka da za ya fito a Fuskar Waya:</label>
-    <input type="text" id="appNameInput" placeholder="Misali: My Expense Tracker" value="My App">
+    <label for="appNameInput">Sunan App dinka:</label>
+    <input type="text" id="appNameInput" placeholder="Misali: My Dashboard" value="Center App">
 
     <label for="promptInput">Bada bayanin kowane irin App dake kike son gina:</label>
-    <textarea id="promptInput" placeholder="Misali: Gina min cikakken App na kula da harkokin kudi..."></textarea>
+    <textarea id="promptInput" placeholder="Misali: Gina min shafin shiga da dashboard na gudanar da aiki..."></textarea>
     
     <button class="btn-build" id="buildBtn" onclick="generateApp()">🏗️ Kirkiro App Yanzu</button>
 
@@ -44,16 +44,15 @@
       <div style="color:#38bdf8; font-weight:bold;">📱 Gwada App Din Ka (Live Preview):</div>
       <iframe id="appFrame"></iframe>
       
-      <div class="instructions">
-        📌 <strong>Hanyar Samun Ainihin APK File:</strong> Danna maballin green na kasa don sauke fayil din HTML, sannan gidan converter za ya bude don baka ainihin fayil din <strong>.APK</strong> daka iya turawa kowa a WhatsApp ko sakawa a cikin App Menu dinka.
+      <div class="btn-box">
+        <button class="btn-download" onclick="downloadAppFile()">📥 1. Sauke Fayil Din App (HTML File)</button>
+        <a class="btn-converter" href="https://www.webintoapp.com" target="_blank">📲 2. Shiga Converter Don Maida Shi APK</a>
       </div>
-
-      <button class="btn-apk-download" onclick="downloadAppAndConvert()">📲 Sauke Fayil Din & Maida Shi APK</button>
     </div>
   </div>
 
 <script>
-let compiledCode = "";
+let compiledHtml = "";
 let currentAppName = "My_App";
 
 async function generateApp() {
@@ -74,20 +73,20 @@ async function generateApp() {
   buildBtn.textContent = "⏳ AI Yana gina App din...";
   outputArea.style.display = "none";
 
-  const systemInstruction = `You are a professional web app creator. Generate a SINGLE complete HTML file with embedded CSS and JS. DO NOT use markdown codeblock tags.`;
+  const systemInstruction = `You are a professional full-stack web developer. Generate ONLY a single-file valid HTML code with complete embedded CSS and JS logic based on user request. DO NOT add markdown syntax like \`\`\`html. Return pure HTML.`;
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `${systemInstruction}\nApp Request: ${prompt}` })
+      body: JSON.stringify({ message: `${systemInstruction}\nUser App Request: ${prompt}` })
     });
 
     const data = await res.json();
 
     if (res.ok && data.reply) {
-      compiledCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      frame.srcdoc = compiledCode;
+      compiledHtml = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+      frame.srcdoc = compiledHtml;
       outputArea.style.display = "flex";
     } else {
       alert("❌ " + (data.error || "An samu kuskure."));
@@ -100,20 +99,13 @@ async function generateApp() {
   }
 }
 
-function downloadAppAndConvert() {
-  if (!compiledCode) return;
-
-  // 1. Sauke Fayil din HTML
-  const blob = new Blob([compiledCode], { type: "text/html;charset=utf-8" });
+function downloadAppFile() {
+  if (!compiledHtml) return;
+  const blob = new Blob([compiledHtml], { type: "text/html;charset=utf-8" });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = `${currentAppName.replace(/\s+/g, '_')}.html`;
   link.click();
-
-  // 2. Buɗe WebIntoApp Converter
-  setTimeout(() => {
-    window.open('[https://www.webintoapp.com](https://www.webintoapp.com)', '_blank');
-  }, 800);
 }
 </script>
 
