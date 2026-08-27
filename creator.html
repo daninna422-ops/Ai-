@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Professional Creator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <title>Center App AI - APK Builder</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -12,44 +11,50 @@
     header h1 { font-size: 1.4rem; color: #38bdf8; }
     header a { color: #94a3b8; text-decoration: none; border: 1px solid #334155; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; }
     .container { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 800px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    label { font-size: 1rem; color: #e2e8f0; display: block; margin-bottom: 8px; font-weight: bold; }
-    textarea { width: 100%; height: 110px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; color: white; font-size: 1rem; outline: none; margin-bottom: 15px; resize: none; }
-    textarea:focus { border-color: #38bdf8; }
+    label { font-size: 0.95rem; color: #e2e8f0; display: block; margin-bottom: 8px; font-weight: bold; }
+    input[type="text"], textarea { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; color: white; font-size: 0.95rem; outline: none; margin-bottom: 15px; }
+    textarea { height: 100px; resize: none; }
     .btn-build { width: 100%; background: #0284c7; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .btn-build:hover { background: #0369a1; }
-    .btn-build:disabled { background: #475569; cursor: not-allowed; }
     #outputArea { margin-top: 25px; display: none; flex-direction: column; gap: 15px; }
-    .preview-title { font-size: 1.1rem; color: #38bdf8; font-weight: bold; }
-    iframe { width: 100%; height: 380px; background: white; border: 2px solid #334155; border-radius: 10px; }
-    .btn-download { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+    iframe { width: 100%; height: 350px; background: white; border: 2px solid #334155; border-radius: 10px; }
+    .btn-apk { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+    .btn-apk:hover { background: #16a34a; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🛠️ App Creator AI (Pro)</h1>
+    <h1>🛠️ Center App APK Generator</h1>
     <a href="index.html">💬 Koma Chat</a>
   </header>
 
   <div class="container">
-    <label for="promptInput">Bada cikakken bayanin App din da kake son gina:</label>
-    <textarea id="promptInput" placeholder="Misali: Gina min cikakken App na kula da harkokin kudi (Expense Tracker) mai zane-zane na kwarai..."></textarea>
+    <label for="appNameInput">Sunan App dinka da Tambari (Icon):</label>
+    <input type="text" id="appNameInput" placeholder="Misali: My Finance App" value="Center App">
+
+    <label for="promptInput">Bada bayanin kowane irin App dake kike son gina:</label>
+    <textarea id="promptInput" placeholder="Misali: Gina min cikakken App na kula da harkokin kudi mai zane-zane..."></textarea>
     
-    <button class="btn-build" id="buildBtn" onclick="generateApp()">🏗️ Kirkiro Cikakken App (Multi-File)</button>
+    <button class="btn-build" id="buildBtn" onclick="generateApp()">🏗️ Kirkiro App Yanzu</button>
 
     <div id="outputArea">
-      <div class="preview-title">📱 Gwada App Din Ka (Live Preview):</div>
+      <div style="color:#38bdf8; font-weight:bold;">📱 Gwada App Din Ka (Live Preview):</div>
       <iframe id="appFrame"></iframe>
       
-      <button class="btn-download" onclick="downloadZipApp()">📦 Sauke Cikakken App (ZIP Package)</button>
+      <button class="btn-apk" onclick="downloadApkPackage()">📲 Sauke App Din A Waya (Maida shi APK)</button>
     </div>
   </div>
 
 <script>
-let generatedData = null;
+let fullHtmlCode = "";
+let currentAppName = "My_App";
 
 async function generateApp() {
   const prompt = document.getElementById('promptInput').value.trim();
+  const appName = document.getElementById('appNameInput').value.trim() || "Center App";
+  currentAppName = appName.replace(/\s+/g, '_');
+  
   const buildBtn = document.getElementById('buildBtn');
   const outputArea = document.getElementById('outputArea');
   const frame = document.getElementById('appFrame');
@@ -60,73 +65,50 @@ async function generateApp() {
   }
 
   buildBtn.disabled = true;
-  buildBtn.textContent = "⏳ AI Yana gina fayilolin App dinka (HTML, CSS, JS)...";
+  buildBtn.textContent = "⏳ AI Yana gina App din tare da tsarin APK...";
   outputArea.style.display = "none";
 
-  const systemInstruction = `You are an expert full-stack web app developer. 
-Return ONLY a JSON object containing three properties: "html", "css", and "javascript".
-Do NOT use Markdown formatting like json or html in your output. Return raw valid JSON string only.
-Structure:
-{
-  "html": "<!DOCTYPE html>...",
-  "css": "/* styles */",
-  "javascript": "// logic"
-}`;
+  const systemInstruction = `You are a professional Android WebApp creator. Generate a SINGLE valid HTML document containing CSS, JS, and PWA Web Manifest metadata with icons so it can be converted into an Android APK directly. App Name: "${appName}". Return ONLY raw valid HTML code without markdown tags.`;
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `${systemInstruction}\nUser App Request: ${prompt}` })
+      body: JSON.stringify({ message: `${systemInstruction}\nUser prompt: ${prompt}` })
     });
 
     const data = await res.json();
 
     if (res.ok && data.reply) {
-      let cleanText = data.reply.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      generatedData = JSON.parse(cleanText);
-
-      // Haɗa su don Live Preview kawai
-      const fullContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>${generatedData.css || ''}</style>
-        </head>
-        <body>
-          ${generatedData.html || ''}
-          <script>${generatedData.javascript || ''}<\/script>
-        </body>
-        </html>
-      `;
-
-      frame.srcdoc = fullContent;
+      fullHtmlCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+      frame.srcdoc = fullHtmlCode;
       outputArea.style.display = "flex";
     } else {
-      alert("❌ " + (data.error || "An samu kuskure wajen gina App."));
+      alert("❌ " + (data.error || "An samu kuskure."));
     }
   } catch (err) {
-    alert("❌ Kuskure wajen sarrafa bayanai ko haɗawa da Server. Da sauran kuskuren JSON parsing.");
+    alert("❌ Kuskure wajen haɗawa da Server.");
   } finally {
     buildBtn.disabled = false;
-    buildBtn.textContent = "🏗️ Kirkiro Cikakken App (Multi-File)";
+    buildBtn.textContent = "🏗️ Kirkiro App Yanzu";
   }
 }
 
-function downloadZipApp() {
-  if (!generatedData) return;
-  
-  const zip = new JSZip();
-  zip.file("index.html", `<!DOCTYPE html>\n<html lang="ha">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n${generatedData.html}\n<script src="script.js"><\/script>\n</body>\n</html>`);
-  zip.file("style.css", generatedData.css || "");
-  zip.file("script.js", generatedData.javascript || "");
+function downloadApkPackage() {
+  if (!fullHtmlCode) return;
 
-  zip.generateAsync({type:"blob"}).then(function(content) {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = "CenterApp_Project.zip";
-    link.click();
-  });
+  // 1. Sauke HTML File
+  const blob = new Blob([fullHtmlCode], { type: "text/html;charset=utf-8" });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${currentAppName}.html`;
+  link.click();
+
+  // 2. Tura mutum zuwa shafin converter domin maida shi APK a danna daya
+  setTimeout(() => {
+    alert(`💡 Don samun fayil din .APK mai tambari:\n\n1. An sauke '${currentAppName}.html' a wayarka.\n2. Yanzu shafin WebIntoApp zai buɗe - saka fayil din da sunan app din ka don sauke ainihin APK!`);
+    window.open('[https://www.webintoapp.com](https://www.webintoapp.com)', '_blank');
+  }, 1000);
 }
 </script>
 
