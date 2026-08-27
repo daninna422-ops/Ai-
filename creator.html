@@ -3,111 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Builder</title>
+  <title>Center App AI - Step Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-    header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    header h1 { font-size: 1.4rem; color: #38bdf8; }
-    header a { color: #94a3b8; text-decoration: none; border: 1px solid #334155; padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; }
-    .container { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 800px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    label { font-size: 0.95rem; color: #e2e8f0; display: block; margin-bottom: 8px; font-weight: bold; }
-    input[type="text"], textarea { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; color: white; font-size: 0.95rem; outline: none; margin-bottom: 15px; }
-    textarea { height: 100px; resize: none; }
-    .btn-build { width: 100%; background: #0284c7; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .btn-build:hover { background: #0369a1; }
-    .btn-build:disabled { background: #475569; cursor: not-allowed; }
-    #outputArea { margin-top: 25px; display: none; flex-direction: column; gap: 15px; }
-    iframe { width: 100%; height: 350px; background: white; border: 2px solid #334155; border-radius: 10px; }
-    .btn-box { display: flex; flex-direction: column; gap: 10px; }
-    .btn-download { background: #22c55e; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
-    .btn-converter { background: #eab308; color: #0f172a; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; }
+    body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+    iframe { width: 100%; height: 400px; background: #fff; border-radius: 8px; }
   </style>
 </head>
-<body>
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
 
-  <header>
-    <h1>🛠️ Center App Generator</h1>
-    <a href="index.html">💬 Koma Chat</a>
+  <header class="flex justify-between items-center mb-6">
+    <h1 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Multi-Step App Builder</h1>
+    <a href="index.html" class="text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded text-slate-300">💬 Chat</a>
   </header>
 
-  <div class="container">
-    <label for="appNameInput">Sunan App dinka:</label>
-    <input type="text" id="appNameInput" placeholder="Misali: My Dashboard" value="Center App">
+  <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl space-y-4">
+    <div>
+      <label class="block font-bold mb-1 text-sm">Sunan App:</label>
+      <input type="text" id="appName" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white" value="My App">
+    </div>
 
-    <label for="promptInput">Bada bayanin kowane irin App dake kike son gina:</label>
-    <textarea id="promptInput" placeholder="Misali: Gina min shafin shiga da dashboard na gudanar da aiki..."></textarea>
-    
-    <button class="btn-build" id="buildBtn" onclick="generateApp()">🏗️ Kirkiro App Yanzu</button>
+    <div>
+      <label class="block font-bold mb-1 text-sm">Cikakken Bayanin App din da kake so:</label>
+      <textarea id="appPrompt" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white h-24" placeholder="Misali: App na harkar kudi da dashboard..."></textarea>
+    </div>
 
-    <div id="outputArea">
-      <div style="color:#38bdf8; font-weight:bold;">📱 Gwada App Din Ka (Live Preview):</div>
-      <iframe id="appFrame"></iframe>
+    <!-- Stepper Progress Controls -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+      <button id="step1Btn" onclick="buildStep(1)" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded text-sm flex items-center justify-center gap-2">
+        <span>1️⃣ Mataki 1: Gina Fuska (UI)</span>
+      </button>
       
-      <div class="btn-box">
-        <button class="btn-download" onclick="downloadAppFile()">📥 1. Sauke Fayil Din App (HTML File)</button>
-        <a class="btn-converter" href="https://www.webintoapp.com" target="_blank">📲 2. Shiga Converter Don Maida Shi APK</a>
+      <button id="step2Btn" onclick="buildStep(2)" disabled class="bg-slate-700 text-slate-400 font-bold py-3 rounded text-sm cursor-not-allowed flex items-center justify-center gap-2">
+        <span>2️⃣ Mataki 2: Cika Ayyuka (Logic)</span>
+      </button>
+    </div>
+
+    <div id="statusBox" class="hidden text-xs text-amber-400 font-semibold text-center p-2 bg-slate-900 rounded"></div>
+
+    <!-- Output Section -->
+    <div id="outputArea" class="hidden flex-col gap-4 pt-4 border-t border-slate-700">
+      <div class="text-sky-400 font-bold text-sm">📱 Live Preview:</div>
+      <iframe id="appFrame"></iframe>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="downloadCode()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded text-sm text-center">
+          📥 Sauke Cikakken HTML
+        </button>
+        <a href="https://www.webintoapp.com" target="_blank" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded text-sm text-center">
+          📲 Maida Shi APK (WebIntoApp)
+        </a>
       </div>
     </div>
   </div>
 
 <script>
-let compiledHtml = "";
-let currentAppName = "My_App";
+let appState = {
+  name: '',
+  prompt: '',
+  uiCode: '',
+  finalCode: ''
+};
 
-async function generateApp() {
-  const prompt = document.getElementById('promptInput').value.trim();
-  const appName = document.getElementById('appNameInput').value.trim() || "My App";
-  currentAppName = appName;
-  
-  const buildBtn = document.getElementById('buildBtn');
+async function buildStep(step) {
+  const name = document.getElementById('appName').value.trim() || "My App";
+  const prompt = document.getElementById('appPrompt').value.trim();
+  const statusBox = document.getElementById('statusBox');
+  const step1Btn = document.getElementById('step1Btn');
+  const step2Btn = document.getElementById('step2Btn');
   const outputArea = document.getElementById('outputArea');
   const frame = document.getElementById('appFrame');
 
   if (!prompt) {
-    alert("Dan Allah rubuta bayanin app din da kake son gina!");
+    alert("Da alama baka rubuta bayanin App din ba!");
     return;
   }
 
-  buildBtn.disabled = true;
-  buildBtn.textContent = "⏳ AI Yana gina App din...";
-  outputArea.style.display = "none";
+  appState.name = name;
+  appState.prompt = prompt;
 
-  const systemInstruction = `You are a professional full-stack web developer. Generate ONLY a single-file valid HTML code with complete embedded CSS and JS logic based on user request. DO NOT add markdown syntax like \`\`\`html. Return pure HTML.`;
+  statusBox.classList.remove('hidden');
+  
+  if (step === 1) {
+    statusBox.innerText = "⏳ Mataki 1: AI Yana zana fuskatar App (UI & Styles)...";
+    step1Btn.disabled = true;
 
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `${systemInstruction}\nUser App Request: ${prompt}` })
-    });
+    const sysMsg = `You are an expert web UI designer. Build only the HTML and Tailwind CSS UI skeleton for this app: "${prompt}". Use Tailwind CDN in head. DO NOT include markdown tags like \`\`\`html. Return pure raw HTML.`;
 
-    const data = await res.json();
-
-    if (res.ok && data.reply) {
-      compiledHtml = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      frame.srcdoc = compiledHtml;
-      outputArea.style.display = "flex";
-    } else {
-      alert("❌ " + (data.error || "An samu kuskure."));
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: sysMsg })
+      });
+      const data = await res.json();
+      
+      if (data.reply) {
+        appState.uiCode = cleanCode(data.reply);
+        frame.srcdoc = appState.uiCode;
+        outputArea.classList.remove('hidden');
+        outputArea.classList.add('flex');
+        
+        statusBox.innerText = "✅ An kammala Mataki 1! Yanzu danna Mataki 2 domin sa aiki a ciki.";
+        step2Btn.disabled = false;
+        step2Btn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+        step2Btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'text-white');
+      }
+    } catch (e) {
+      statusBox.innerText = "❌ An samu kuskure wajen gina Mataki 1.";
+    } finally {
+      step1Btn.disabled = false;
     }
-  } catch (err) {
-    alert("❌ Kuskure wajen haɗawa da Server.");
-  } finally {
-    buildBtn.disabled = false;
-    buildBtn.textContent = "🏗️ Kirkiro App Yanzu";
+  } 
+  
+  else if (step === 2) {
+    statusBox.innerText = "⏳ Mataki 2: AI Yana haɗa JavaScript & Logics na gaske...";
+    step2Btn.disabled = true;
+
+    const sysMsg = `Take this HTML layout:\n${appState.uiCode}\n\nAdd complete functional JavaScript logic, event handlers, interactive elements, and data storage for the request: "${prompt}". DO NOT return markdown like \`\`\`html. Return ONLY the complete executable single HTML file code.`;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: sysMsg })
+      });
+      const data = await res.json();
+
+      if (data.reply) {
+        appState.finalCode = cleanCode(data.reply);
+        frame.srcdoc = appState.finalCode;
+        statusBox.innerText = "🎉 Cikakken App ya kammala 100%! Ka iya saukewa ko maida shi APK.";
+      }
+    } catch (e) {
+      statusBox.innerText = "❌ An samu kuskure wajen haɗa Mataki 2.";
+    } finally {
+      step2Btn.disabled = false;
+    }
   }
 }
 
-function downloadAppFile() {
-  if (!compiledHtml) return;
-  const blob = new Blob([compiledHtml], { type: "text/html;charset=utf-8" });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${currentAppName.replace(/\s+/g, '_')}.html`;
-  link.click();
+function cleanCode(str) {
+  return str.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+}
+
+function downloadCode() {
+  const content = appState.finalCode || appState.uiCode;
+  if (!content) return;
+  const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${appState.name.replace(/\s+/g, '_')}.html`;
+  a.click();
 }
 </script>
-
 </body>
 </html>
