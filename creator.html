@@ -3,345 +3,345 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Multi-Step Wizard</title>
+  <title>Center App AI - Visual Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
-    .step-card { border: 2px solid #334155; transition: all 0.2s; cursor: pointer; }
-    .step-card.selected { border-color: #38bdf8; background-color: #1e293b; }
+    body { background-color: #0b132b; color: #f8fafc; font-family: sans-serif; }
+    .ui-card { border: 2px solid #1c2541; transition: all 0.3s; cursor: pointer; }
+    .ui-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+    .ui-card.selected { border-color: #38bdf8; background-color: #1c2541; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+    .img-preview { height: 140px; object-fit: cover; border-radius: 6px; }
   </style>
 </head>
-<body class="p-4 md:p-8 max-w-4xl mx-auto">
+<body class="p-3 md:p-6 max-w-5xl mx-auto">
 
-  <header class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
-    <h1 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-layer-group"></i> Center App Builder</h1>
-    <a href="index.html" class="text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded text-slate-300">💬 Chat</a>
+  <header class="flex justify-between items-center mb-6 border-b border-slate-800 pb-3">
+    <h1 class="text-lg font-bold text-sky-400"><i class="fa-solid fa-wand-magic-sparkles"></i> Visual App Creator</h1>
+    <a href="index.html" class="text-xs bg-slate-800 border border-slate-700 px-3 py-1.5 rounded text-slate-300">💬 Chat</a>
   </header>
 
-  <div class="flex justify-between mb-8 text-xs font-bold text-slate-400 border-b border-slate-800 pb-3">
-    <span id="ind1" class="text-sky-400">1. Nau'in App</span>
-    <span id="ind2">2. Login & Reg</span>
-    <span id="ind3">3. Home / Dashboard</span>
-    <span id="ind4">4. Bayanin Aiki & Fitarwa</span>
+  <div class="grid grid-cols-4 gap-2 mb-6 text-center text-xs font-bold text-slate-400">
+    <div id="st1" class="p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30">1. Category</div>
+    <div id="st2" class="p-2 bg-slate-900 rounded-lg border border-slate-800">2. Login UI</div>
+    <div id="st3" class="p-2 bg-slate-900 rounded-lg border border-slate-800">3. Dashboard</div>
+    <div id="st4" class="p-2 bg-slate-900 rounded-lg border border-slate-800">4. Compile Code</div>
   </div>
 
-  <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 shadow-2xl">
 
-    <div id="step1Box" class="space-y-4">
-      <h2 class="text-sm font-bold text-sky-400">MATAKI 1: Zaɓi Nau'in App ɗin da Kake Son Gina</h2>
+    <div id="step1" class="space-y-4">
+      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-shapes"></i> MATAKI 1: Zaɓi Nau'in App da Kake Son Gina (Zaɓi 1-10)</h2>
       
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center" id="appTypeGrid">
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Banki / Finance', this)">
-          <i class="fa-solid fa-building-columns text-2xl text-emerald-400 mb-1"></i>
-          <p class="text-xs font-semibold">Banki / Finance</p>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center" id="catGrid">
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Banki & FinTech', this)">
+          <i class="fa-solid fa-wallet text-3xl text-emerald-400 mb-2"></i>
+          <p class="text-xs font-bold">FinTech / Banki</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Chat / Social App', this)">
-          <i class="fa-solid fa-comments text-2xl text-blue-400 mb-1"></i>
-          <p class="text-xs font-semibold">Chat / Social</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Chat & Messaging', this)">
+          <i class="fa-solid fa-comments text-3xl text-blue-400 mb-2"></i>
+          <p class="text-xs font-bold">Chat & Social</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Makaranta / E-learning', this)">
-          <i class="fa-solid fa-graduation-cap text-2xl text-amber-400 mb-1"></i>
-          <p class="text-xs font-semibold">Makaranta</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Makaranta & Learning', this)">
+          <i class="fa-solid fa-graduation-cap text-3xl text-amber-400 mb-2"></i>
+          <p class="text-xs font-bold">E-Learning</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Kasuwanci / E-commerce', this)">
-          <i class="fa-solid fa-cart-shopping text-2xl text-purple-400 mb-1"></i>
-          <p class="text-xs font-semibold">Kasuwanci</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Kasuwanci & Store', this)">
+          <i class="fa-solid fa-cart-shopping text-3xl text-purple-400 mb-2"></i>
+          <p class="text-xs font-bold">E-Commerce</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('AI Tool / Assistant', this)">
-          <i class="fa-solid fa-robot text-2xl text-rose-400 mb-1"></i>
-          <p class="text-xs font-semibold">AI App</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('AI & Assistant', this)">
+          <i class="fa-solid fa-brain text-3xl text-rose-400 mb-2"></i>
+          <p class="text-xs font-bold">AI Assistant</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Game / Wasanni', this)">
-          <i class="fa-solid fa-gamepad text-2xl text-indigo-400 mb-1"></i>
-          <p class="text-xs font-semibold">Game</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Gaming App', this)">
+          <i class="fa-solid fa-gamepad text-3xl text-indigo-400 mb-2"></i>
+          <p class="text-xs font-bold">Game App</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Kallon Talle Don Samun Kudi', this)">
-          <i class="fa-solid fa-circle-dollar-to-slot text-2xl text-yellow-400 mb-1"></i>
-          <p class="text-xs font-semibold">Kallon Talle</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Watch Ads & Earn', this)">
+          <i class="fa-solid fa-sack-dollar text-3xl text-yellow-400 mb-2"></i>
+          <p class="text-xs font-bold">Watch & Earn</p>
         </div>
-        <div class="step-card p-3 rounded-lg bg-slate-900" onclick="selectAppType('Aikin Yanar Gizo', this)">
-          <i class="fa-solid fa-laptop-code text-2xl text-teal-400 mb-1"></i>
-          <p class="text-xs font-semibold">Online Work</p>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Online Freelancing', this)">
+          <i class="fa-solid fa-laptop-code text-3xl text-teal-400 mb-2"></i>
+          <p class="text-xs font-bold">Online Work</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Crypto & Investment', this)">
+          <i class="fa-solid fa-chart-line text-3xl text-cyan-400 mb-2"></i>
+          <p class="text-xs font-bold">Investment</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Music & Video Stream', this)">
+          <i class="fa-solid fa-play text-3xl text-red-500 mb-2"></i>
+          <p class="text-xs font-bold">Media Streaming</p>
         </div>
       </div>
 
-      <input type="text" id="customAppType" placeholder="Ko ka rubuta wani irin App na daban..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-xs text-white">
+      <input type="text" id="customCat" placeholder="Ko ka rubuta naka anan..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white">
 
-      <button onclick="processStep1()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded text-sm mt-4">
-        Kirkiro Zaɓuɓɓuka & Wuce Mataki na 2 ➡️
+      <button onclick="nextStep(1)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm mt-4">
+        Cigaba zuwa Mataki na 2 (Continue) ➡️
       </button>
     </div>
 
-    <div id="step2Box" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400">MATAKI 2: Zaɓi Fuskarsar Login & Rigista da Kake So</h2>
-      <p class="text-xs text-slate-400">AI ya gina maka salo daban-daban dangane da irin App ɗin da ka zaɓa. Zaɓi ɗaya:</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="loginOptionsGrid">
-        </div>
-
-      <textarea id="loginCustomText" placeholder="Ko ka rubuta yadda kake son shafin Login/Rijista ya kasance..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-xs text-white h-16"></textarea>
-
-      <button onclick="processStep2()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded text-sm mt-4">
-        Ajiye & Wuce Mataki na 3 (Continue) ➡️
-      </button>
-    </div>
-
-    <div id="step3Box" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400">MATAKI 3: Zaɓi Fuskarsar Home / Dashboard</h2>
-      <p class="text-xs text-slate-400">Zaɓi tsarin fuskarsa da ake so mai amfani ya gani idan ya shiga ciki:</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="homeOptionsGrid">
-        </div>
-
-      <textarea id="homeCustomText" placeholder="Ko ka rubuta yadda kake son shafin Home/Dashboard ya kasance..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-xs text-white h-16"></textarea>
-
-      <button onclick="processStep3()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded text-sm mt-4">
-        Ajiye & Wuce Mataki na 4 (Continue) ➡️
-      </button>
-    </div>
-
-    <div id="step4Box" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400">MATAKI 4: Bayanin Aikin App & Fitar da Cikakken Code</h2>
+    <div id="step2" class="hidden space-y-4">
+      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-lock"></i> MATAKI 2: Zaɓi Fuskarsar Login & Register (Samfurin Hotuna)</h2>
       
-      <input type="text" id="appName" placeholder="Sunan App dinka (Misali: PayFast)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-xs text-white">
-      <textarea id="appLogicDetails" placeholder="Rubuta dukkan ayyukan da kake son App din ya rika yi don ya kasance cikakke..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-xs text-white h-24"></textarea>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="loginCards">
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Modern Blue Finance Login', this)">
+          <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Option A: Modern Blue Auth</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Minimalist Clean White Auth', this)">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Option B: Clean White Minimal</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Dark Purple Crypto Auth', this)">
+          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Option C: Dark Neon Glass</p>
+        </div>
+      </div>
 
-      <button id="finalBuildBtn" onclick="generateFinalApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded text-sm">
-        🚀 Haɗe Dukkan Matakan & Gina Cikakken App
+      <textarea id="customLogin" placeholder="Ko ka rubuta irin tsarin shigar da kake so a zana..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-16"></textarea>
+
+      <button onclick="nextStep(2)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm">
+        Cigaba zuwa Mataki na 3 (Continue) ➡️
+      </button>
+    </div>
+
+    <div id="step3" class="hidden space-y-4">
+      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-table-cells font-bold"></i> MATAKI 3: Zaɓi Fuskarsar Dashboard / Home (Samfurin Hotuna)</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="homeCards">
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('FinTech Balance Grid Cards', this)">
+          <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Dashboard A: Wallet & Stats Grid</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('E-commerce Feed List UI', this)">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Dashboard B: Analytics & Feeds</p>
+        </div>
+        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('Social Chat Sidebar UI', this)">
+          <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
+          <p class="text-xs font-bold text-center">Dashboard C: Chat & Stream Layout</p>
+        </div>
+      </div>
+
+      <textarea id="customDash" placeholder="Ko ka rubuta tsarin Home/Dashboard din da kake so..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-16"></textarea>
+
+      <button onclick="nextStep(3)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm">
+        Cigaba zuwa Mataki na 4 (Continue) ➡️
+      </button>
+    </div>
+
+    <div id="step4" class="hidden space-y-4">
+      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-code"></i> MATAKI 4: Bayanin Aiki da Rubuta Cikakkun Lambobi (4000+ Lines)</h2>
+      
+      <input type="text" id="appName" placeholder="Sunan App ɗinka (Misali: Apex Mobile)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white">
+      <textarea id="appLogic" placeholder="Bayyana dukkan abubuwan da kake son App din ya sarrafa a ciki..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-24"></textarea>
+
+      <button id="compileBtn" onclick="compileFullApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-lg text-sm">
+        🚀 Haɗa Dukkan Code Din Matakan Don Samun Cikakken App
       </button>
 
-      <div id="finalOutput" class="hidden flex-col gap-4 pt-4 border-t border-slate-700">
-        <div class="text-sky-400 font-bold text-sm">📱 Live Preview Na Cikakken App:</div>
-        <iframe id="appFrame" class="w-full h-96 bg-white rounded-lg border border-slate-700"></iframe>
+      <div id="output" class="hidden flex-col gap-4 pt-4 border-t border-slate-800">
+        <div class="text-sky-400 font-bold text-sm">📱 Preview Din App Din Ka:</div>
+        <iframe id="previewFrame" class="w-full h-96 bg-white rounded-xl border border-slate-700"></iframe>
 
-        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-2">
-          <label class="text-xs text-amber-400 font-bold block">🔗 URL Link ɗin App ɗinka:</label>
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+          <label class="text-xs text-amber-400 font-bold block">🔗 Link ɗin App (An shirya don WebIntoApp):</label>
           <div class="flex gap-2">
-            <input type="text" id="urlOutput" readonly class="w-full bg-slate-800 border border-slate-700 p-2 rounded text-xs text-slate-300">
-            <button onclick="copyUrl()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 rounded text-white font-bold">Copy Link</button>
+            <input type="text" id="appUrl" readonly class="w-full bg-slate-900 border border-slate-800 p-2 rounded text-xs text-slate-300">
+            <button onclick="copyLink()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 rounded text-white font-bold">Copy Link</button>
           </div>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3">
-          <button onclick="downloadHtml()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded text-sm text-center">
+          <button onclick="downloadHtml()" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg text-sm">
             📥 Sauke HTML File
           </button>
-          <a href="https://www.webintoapp.com" target="_blank" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded text-sm text-center">
+          <a href="https://www.webintoapp.com" target="_blank" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm text-center">
             📲 Maida Shi APK (WebIntoApp)
           </a>
         </div>
       </div>
     </div>
 
-    <div id="loader" class="hidden text-center py-8">
+    <div id="spin" class="hidden text-center py-6">
       <i class="fa-solid fa-spinner fa-spin text-3xl text-sky-400 mb-2"></i>
-      <p class="text-xs text-slate-300" id="loaderText">AI yana sarrafa bayanai...</p>
+      <p class="text-xs text-slate-400" id="spinTxt">AI Yana haɗa lambobin matakin...</p>
     </div>
 
   </div>
 
 <script>
-let appConfig = {
-  type: '',
-  loginStyle: '',
-  homeStyle: '',
-  name: '',
-  logic: ''
+let appStore = {
+  category: '',
+  loginUI: '',
+  dashUI: '',
+  loginCodeChunk: '',
+  dashCodeChunk: '',
+  finalCode: ''
 };
 
-let fullCode = '';
-
-function selectAppType(val, el) {
-  appConfig.type = val;
-  document.querySelectorAll('#appTypeGrid .step-card').forEach(c => c.classList.remove('selected'));
+function setCategory(val, el) {
+  appStore.category = val;
+  document.querySelectorAll('#catGrid .ui-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-function showLoader(txt) {
-  document.getElementById('loaderText').innerText = txt;
-  document.getElementById('loader').classList.remove('hidden');
-}
-
-function hideLoader() {
-  document.getElementById('loader').classList.add('hidden');
-}
-
-async function processStep1() {
-  const customType = document.getElementById('customAppType').value.trim();
-  if (customType) appConfig.type = customType;
-
-  if (!appConfig.type) {
-    alert("Dan Allah zaɓi nau'in App ko ka rubuta a akwati!");
-    return;
-  }
-
-  showLoader("AI Yana kirkiro salon Login/Rijista daban-daban...");
-
-  // Generate 2 visual layout templates for Login
-  const loginGrid = document.getElementById('loginOptionsGrid');
-  loginGrid.innerHTML = `
-    <div class="step-card p-4 rounded-lg bg-slate-900" onclick="selectLogin('Modern Glassmorphism Login', this)">
-      <div class="p-3 bg-slate-800 rounded mb-2 text-center text-xs border border-slate-700">
-        <div class="font-bold text-sky-400 mb-1">🔐 Salo 1: Modern Card</div>
-        <div class="bg-slate-900 p-1 mb-1 rounded text-slate-500">Email / Username</div>
-        <div class="bg-slate-900 p-1 mb-1 rounded text-slate-500">Password</div>
-        <div class="bg-sky-600 p-1 text-white rounded font-bold">Shiga App</div>
-      </div>
-      <p class="text-xs font-bold text-center">Salo 1: Dark Glass Login</p>
-    </div>
-
-    <div class="step-card p-4 rounded-lg bg-slate-900" onclick="selectLogin('Minimalist Clean Login', this)">
-      <div class="p-3 bg-slate-100 text-slate-900 rounded mb-2 text-center text-xs">
-        <div class="font-bold text-blue-600 mb-1">🔐 Salo 2: Light Clean</div>
-        <div class="bg-white p-1 mb-1 rounded border border-slate-300">Email</div>
-        <div class="bg-white p-1 mb-1 rounded border border-slate-300">Password</div>
-        <div class="bg-blue-600 p-1 text-white rounded font-bold">Shiga</div>
-      </div>
-      <p class="text-xs font-bold text-center">Salo 2: Light Minimalist</p>
-    </div>
-  `;
-
-  hideLoader();
-  document.getElementById('step1Box').classList.add('hidden');
-  document.getElementById('step2Box').classList.remove('hidden');
-  document.getElementById('ind1').className = "text-slate-500";
-  document.getElementById('ind2').className = "text-sky-400";
-}
-
-function selectLogin(style, el) {
-  appConfig.loginStyle = style;
-  document.querySelectorAll('#loginOptionsGrid .step-card').forEach(c => c.classList.remove('selected'));
+function setLogin(val, el) {
+  appStore.loginUI = val;
+  document.querySelectorAll('#loginCards .ui-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-function processStep2() {
-  const custom = document.getElementById('loginCustomText').value.trim();
-  if (custom) appConfig.loginStyle = custom;
-
-  if (!appConfig.loginStyle) {
-    alert("Dan Allah zaɓi salon Login ko ka rubuta naka!");
-    return;
-  }
-
-  showLoader("AI Yana kirkiro salon Dashboard/Home...");
-
-  const homeGrid = document.getElementById('homeOptionsGrid');
-  homeGrid.innerHTML = `
-    <div class="step-card p-4 rounded-lg bg-slate-900" onclick="selectHome('Grid Cards with Bottom Navigation', this)">
-      <div class="p-3 bg-slate-800 rounded mb-2 text-xs border border-slate-700">
-        <div class="font-bold text-sky-400 mb-2">📊 Home Option 1</div>
-        <div class="grid grid-cols-2 gap-1 mb-2">
-          <div class="bg-slate-700 p-2 rounded text-center">Card A</div>
-          <div class="bg-slate-700 p-2 rounded text-center">Card B</div>
-        </div>
-        <div class="bg-slate-900 p-1 text-center text-slate-400">[ 🏠 Home | ⚙️ Settings ]</div>
-      </div>
-      <p class="text-xs font-bold text-center">Option A: Grid Cards + Bottom Nav</p>
-    </div>
-
-    <div class="step-card p-4 rounded-lg bg-slate-900" onclick="selectHome('Sidebar Analytics Dashboard', this)">
-      <div class="p-3 bg-slate-800 rounded mb-2 text-xs border border-slate-700">
-        <div class="font-bold text-purple-400 mb-2">📊 Home Option 2</div>
-        <div class="bg-slate-700 p-2 rounded mb-1">Banner Statistics</div>
-        <div class="bg-slate-700 p-2 rounded">Feed Activity List</div>
-      </div>
-      <p class="text-xs font-bold text-center">Option B: Top Banner + Feed List</p>
-    </div>
-  `;
-
-  hideLoader();
-  document.getElementById('step2Box').classList.add('hidden');
-  document.getElementById('step3Box').classList.remove('hidden');
-  document.getElementById('ind2').className = "text-slate-500";
-  document.getElementById('ind3').className = "text-sky-400";
-}
-
-function selectHome(style, el) {
-  appConfig.homeStyle = style;
-  document.querySelectorAll('#homeOptionsGrid .step-card').forEach(c => c.classList.remove('selected'));
+function setDashboard(val, el) {
+  appStore.dashUI = val;
+  document.querySelectorAll('#homeCards .ui-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-function processStep3() {
-  const custom = document.getElementById('homeCustomText').value.trim();
-  if (custom) appConfig.homeStyle = custom;
-
-  if (!appConfig.homeStyle) {
-    alert("Dan Allah zaɓi salon Home ko ka rubuta naka!");
-    return;
-  }
-
-  document.getElementById('step3Box').classList.add('hidden');
-  document.getElementById('step4Box').classList.remove('hidden');
-  document.getElementById('ind3').className = "text-slate-500";
-  document.getElementById('ind4').className = "text-sky-400";
+function showSpin(txt) {
+  document.getElementById('spinTxt').innerText = txt;
+  document.getElementById('spin').classList.remove('hidden');
 }
 
-async function generateFinalApp() {
-  appConfig.name = document.getElementById('appName').value.trim() || 'Center App';
-  appConfig.logic = document.getElementById('appLogicDetails').value.trim();
+function hideSpin() {
+  document.getElementById('spin').classList.add('hidden');
+}
 
-  const finalBtn = document.getElementById('finalBuildBtn');
-  const finalOutput = document.getElementById('finalOutput');
-  const frame = document.getElementById('appFrame');
-  const urlOutput = document.getElementById('urlOutput');
+async function nextStep(step) {
+  if (step === 1) {
+    const custom = document.getElementById('customCat').value.trim();
+    if (custom) appStore.category = custom;
+    if (!appStore.category) return alert("Zaɓi nau'in App!");
 
-  finalBtn.disabled = true;
-  showLoader("AI Yana haɗe dukkan matakan 4 gaba ɗaya...");
+    showSpin("AI Yana rubuta Module 1 Code (Core Engine)...");
+    
+    // AI Step 1 Code Generation
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Generate core HTML head, Tailwind CSS CDN, and base framework for category: ${appStore.category}. Return RAW code only.` })
+      });
+      const data = await res.json();
+      appStore.loginCodeChunk = data.reply || "";
+    } catch(e) {}
 
-  const promptMsg = `Build a complete single-file HTML production web app.
-App Name: "${appConfig.name}"
-Type: "${appConfig.type}"
-Login Style: "${appConfig.loginStyle}"
-Home Layout: "${appConfig.homeStyle}"
-Features & Functional Logic: "${appConfig.logic}"
+    hideSpin();
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('st1').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
+    document.getElementById('st2').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
+  } 
+  
+  else if (step === 2) {
+    const custom = document.getElementById('customLogin').value.trim();
+    if (custom) appStore.loginUI = custom;
+    if (!appStore.loginUI) return alert("Zaɓi fuskarsar Login!");
 
-Use Tailwind CSS CDN & FontAwesome CDN. Make screens switchable (Login Screen -> Main Home Dashboard). Include working JavaScript code. Return ONLY pure raw HTML code without markdown tags like \`\`\`html.`;
+    showSpin("AI Yana rubuta Module 2 Code (Auth Engine)...");
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Generate HTML/JS for Login & Registration module using style: ${appStore.loginUI}. Return RAW code.` })
+      });
+      const data = await res.json();
+      appStore.dashCodeChunk = data.reply || "";
+    } catch(e) {}
+
+    hideSpin();
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.remove('hidden');
+    document.getElementById('st2').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
+    document.getElementById('st3').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
+  } 
+
+  else if (step === 3) {
+    const custom = document.getElementById('customDash').value.trim();
+    if (custom) appStore.dashUI = custom;
+    if (!appStore.dashUI) return alert("Zaɓi fuskarsar Dashboard!");
+
+    document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step4').classList.remove('hidden');
+    document.getElementById('st3').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
+    document.getElementById('st4').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
+  }
+}
+
+async function compileFullApp() {
+  const name = document.getElementById('appName').value.trim() || 'My Center App';
+  const logic = document.getElementById('appLogic').value.trim();
+
+  const compileBtn = document.getElementById('compileBtn');
+  const output = document.getElementById('output');
+  const frame = document.getElementById('previewFrame');
+  const appUrl = document.getElementById('appUrl');
+
+  compileBtn.disabled = true;
+  showSpin("AI Yana game dukkan lambobin (dubu 4+ lines) waje guda...");
+
+  const compilePrompt = `Assemble and generate a massive, fully-functional single-file HTML Web Application.
+App Title: "${name}"
+Category: "${appStore.category}"
+Login Module: "${appStore.loginUI}"
+Dashboard Module: "${appStore.dashUI}"
+Functional Logic: "${logic}"
+
+Instructions:
+1. Merge the visual interfaces into a seamless interactive web app.
+2. Provide switchable screens (Login -> Dashboard).
+3. Use Tailwind CSS & FontAwesome.
+4. Include working JavaScript handlers.
+5. Return ONLY pure clean HTML code. NO markdown formatting.`;
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: promptMsg })
+      body: JSON.stringify({ message: compilePrompt })
     });
 
     const data = await res.json();
 
     if (res.ok && data.reply) {
-      fullCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      frame.srcdoc = fullCode;
+      appStore.finalCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+      frame.srcdoc = appStore.finalCode;
 
-      const blob = new Blob([fullCode], { type: 'text/html' });
-      urlOutput.value = URL.createObjectURL(blob);
+      const blob = new Blob([appStore.finalCode], { type: 'text/html' });
+      appUrl.value = URL.createObjectURL(blob);
 
-      finalOutput.classList.remove('hidden');
-      finalOutput.classList.add('flex');
+      output.classList.remove('hidden');
+      output.classList.add('flex');
     } else {
-      alert("❌ " + (data.error || "An samu kuskure."));
+      alert("❌ " + (data.error || "An samu matsala."));
     }
-  } catch (e) {
-    alert("❌ Kuskure wajen haɗawa da Server.");
+  } catch (err) {
+    alert("❌ Kuskure wajen game lambobin.");
   } finally {
-    hideLoader();
-    finalBtn.disabled = false;
+    hideSpin();
+    compileBtn.disabled = false;
   }
 }
 
 function downloadHtml() {
-  if (!fullCode) return;
-  const blob = new Blob([fullCode], { type: 'text/html;charset=utf-8' });
+  if (!appStore.finalCode) return;
+  const name = document.getElementById('appName').value.trim() || 'My_App';
+  const blob = new Blob([appStore.finalCode], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${appConfig.name.replace(/\s+/g, '_')}.html`;
+  a.download = `${name.replace(/\s+/g, '_')}.html`;
   a.click();
 }
 
-function copyUrl() {
-  const urlInput = document.getElementById('urlOutput');
-  urlInput.select();
+function copyLink() {
+  const input = document.getElementById('appUrl');
+  input.select();
   document.execCommand('copy');
-  alert("📋 An kwashe URL Link ɗin App ɗinka!");
+  alert("📋 An kwashe Link ɗin App din ka!");
 }
 </script>
 
