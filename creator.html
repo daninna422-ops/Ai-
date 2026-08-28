@@ -3,233 +3,210 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App Builder - Interactive AI Assistant</title>
+  <title>Center App Builder - Enterprise Multi-File</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body { background-color: #0b0f19; color: #f8fafc; font-family: sans-serif; }
-    .chat-box { height: calc(100vh - 240px); overflow-y: auto; }
-    .msg-ai { background-color: #1e293b; border-radius: 12px 12px 12px 0px; }
-    .msg-user { background-color: #0284c7; border-radius: 12px 12px 0px 12px; }
-  </style>
 </head>
-<body class="flex flex-col h-screen max-w-4xl mx-auto p-3">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 max-w-4xl mx-auto">
 
-  <!-- HEADER & STEP TRACKER -->
-  <header class="bg-slate-900 border border-slate-800 p-3 rounded-xl mb-3 flex justify-between items-center">
+  <header class="bg-slate-900 border border-slate-800 p-4 rounded-xl mb-4 flex justify-between items-center">
     <div>
-      <h1 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-robot"></i> Center App Builder</h1>
-      <p id="stepTitle" class="text-[11px] text-emerald-400 font-semibold">Mataki 1: Ginshikin App & Login/Rijista</p>
+      <h1 class="text-base font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Center App Builder (Multi-File)</h1>
+      <p id="stepLabel" class="text-xs text-amber-400">Mataki 1: Gina Shafin Login (login.html)</p>
     </div>
-    <div class="flex gap-2">
-      <button id="nextStepBtn" onclick="nextStep()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-bold">
-        Wuce Mataki Na Gaba ➡️
-      </button>
-      <a href="index.html" class="bg-slate-800 text-xs px-3 py-2 rounded-lg text-slate-300">Chat</a>
-    </div>
+    <span id="fileCount" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-400">Files: 0/4</span>
   </header>
 
-  <!-- CHAT MESSAGES AREA -->
-  <div id="chatBox" class="chat-box bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-4 mb-3">
-    <!-- Messages will be dynamically added here -->
+  <!-- CHAT WINDOW -->
+  <div id="chatBox" class="h-96 bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-y-auto space-y-3 text-xs">
+    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+      👋 **Sannu! Za mu gina Cikakken App mai Fayiloli Daban-Daban.**<br><br>
+      **Mataki na 1:** Tura min umarni ko **Hoton Tsarin Shafin Login/Register** da kake so na gina maka (`login.html`).
+    </div>
   </div>
 
-  <!-- INPUT AREA WITH IMAGE UPLOAD -->
-  <div class="bg-slate-900 border border-slate-800 p-2 rounded-xl flex items-center gap-2">
-    <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl">
+  <!-- IMAGE PREVIEW BOX -->
+  <div id="imgPreviewArea" class="hidden my-2 p-2 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <img id="previewImg" class="w-12 h-12 object-cover rounded">
+      <span class="text-xs text-sky-400">An haɗa hoto don AI ta duba</span>
+    </div>
+    <button onclick="clearImage()" class="text-rose-500 font-bold text-xs px-2">X</button>
+  </div>
+
+  <!-- INPUT AREA -->
+  <div class="mt-3 flex gap-2">
+    <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl flex items-center justify-center">
       <i class="fa-solid fa-image"></i>
-      <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+      <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="previewSelectedImage(event)">
     </label>
-    <input type="text" id="userInput" placeholder="Rubuta sakonka nan ko amsa tambayar AI..." class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none border-sky-500" onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()" class="bg-sky-500 hover:bg-sky-600 text-slate-950 px-4 py-3 rounded-xl font-bold text-xs">
-      <i class="fa-solid fa-paper-plane"></i>
+    <input type="text" id="userPrompt" placeholder="Rubuta umarni anan..." class="flex-1 bg-slate-900 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none focus:border-sky-500">
+    <button onclick="processCurrentStep()" class="bg-sky-500 hover:bg-sky-600 text-slate-950 px-5 py-3 rounded-xl font-bold text-xs">
+      Aika
     </button>
   </div>
 
-  <script>
-    let currentStep = 1;
-    let selectedImageBase64 = "";
-    
-    // Code modules storage
-    let appData = {
-      loginCode: "",
-      dashboardCode: "",
-      logicCode: "",
-      apiKeys: "",
-      appName: "MyCenterApp",
-      fullCode: ""
+  <!-- NEXT STEP CONTROLLER -->
+  <div id="nextActionArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center">
+    <span class="text-xs text-emerald-400 font-semibold" id="stepSuccessTxt">An gina fayil ɗin cikin nasara!</span>
+    <button onclick="goToNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 rounded-lg font-bold">
+      Wuce Mataki Na Gaba ➡️
+    </button>
+  </div>
+
+  <!-- DOWNLOAD ZIP / PROJECT AREA -->
+  <div id="finalDownloadArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-3">
+    <p class="text-xs text-sky-400 font-bold">🎉 AN KAMMALA GINA DUKKAN FAYILOLIN APP ƊIN!</p>
+    <div id="fileList" class="text-xs space-y-1 text-slate-300 font-mono"></div>
+    <button onclick="downloadAllFiles()" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-bold text-xs">
+      📥 Sauke Dukkan Fayilolin Project (HTML/CSS/JS)
+    </button>
+  </div>
+
+<script>
+let currentStep = 1;
+let currentBase64Image = "";
+
+let projectFiles = {
+  "login.html": "",
+  "dashboard.html": "",
+  "app.js": "",
+  "style.css": ""
+};
+
+function previewSelectedImage(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      currentBase64Image = evt.target.result;
+      document.getElementById('previewImg').src = currentBase64Image;
+      document.getElementById('imgPreviewArea').classList.remove('hidden');
     };
+    reader.readAsDataURL(file);
+  }
+}
 
-    window.onload = function() {
-      addAiMessage("Sannu! Ni ce AI mai gina maka App kamar tsarin AppCreator24. 👋\n\n**MATAKI 1:** Menene sunan App ɗinka da kake son gina? Sannan yaya kake son shafin **Login da Rijista** ya kasance? (Za ka iya tura min hoto ko rubuta cikakken bayani).");
-    };
+function clearImage() {
+  currentBase64Image = "";
+  document.getElementById('imageInput').value = "";
+  document.getElementById('imgPreviewArea').classList.add('hidden');
+}
 
-    function addAiMessage(text, imgUrl) {
-      const chatBox = document.getElementById('chatBox');
-      let imgHtml = imgUrl ? '<img src="' + imgUrl + '" class="max-w-xs rounded-lg mt-2 border border-slate-700">' : '';
-      
-      const msgStr = '<div class="flex flex-col items-start">' +
-        '<div class="msg-ai p-3 text-xs text-slate-200 max-w-[85%] leading-relaxed border border-slate-800">' +
-          text.replace(/\n/g, '<br>') + imgHtml +
-        '</div></div>';
-      chatBox.innerHTML += msgStr;
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+function appendChat(role, text) {
+  const box = document.getElementById('chatBox');
+  const isUser = role === 'user';
+  const div = document.createElement('div');
+  div.className = isUser ? "bg-sky-900/40 border border-sky-800 p-3 rounded-lg text-right" : "bg-slate-800 p-3 rounded-lg border border-slate-700";
+  div.innerHTML = text.replace(/\n/g, '<br>');
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
 
-    function addUserMessage(text, imgUrl) {
-      const chatBox = document.getElementById('chatBox');
-      let imgHtml = imgUrl ? '<img src="' + imgUrl + '" class="max-w-xs rounded-lg mt-2 border border-slate-200">' : '';
+async function processCurrentStep() {
+  const input = document.getElementById('userPrompt');
+  const promptText = input.value.trim();
 
-      const msgStr = '<div class="flex flex-col items-end">' +
-        '<div class="msg-user p-3 text-xs text-white max-w-[85%] leading-relaxed">' +
-          text + imgHtml +
-        '</div></div>';
-      chatBox.innerHTML += msgStr;
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+  if (!promptText && !currentBase64Image) {
+    alert("Da alama baka saka rubutu ko hoto ba!");
+    return;
+  }
 
-    function handleImageSelect(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          selectedImageBase64 = evt.target.result;
-          addUserMessage("📷 An haɗa hoto:", selectedImageBase64);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
+  appendChat('user', promptText + (currentBase64Image ? "<br>📷 [An haɗa hoto]" : ""));
+  input.value = "";
 
-    async function sendMessage() {
-      const input = document.getElementById('userInput');
-      const text = input.value.trim();
-      if (!text && !selectedImageBase64) return;
+  appendChat('ai', "⏳ AI tana aiki akan gina wannan fayil ɗin dangane da umarnin ka...");
 
-      const userText = text;
-      const userImg = selectedImageBase64;
-      
-      if (text) addUserMessage(text);
-      
-      input.value = "";
-      selectedImageBase64 = "";
+  let payload = {
+    message: promptText,
+    image: currentBase64Image || null,
+    step: currentStep
+  };
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    clearImage();
+
+    if (data.reply) {
+      let extractedCode = cleanCode(data.reply);
 
       if (currentStep === 1) {
-        await processStep1(userText, userImg);
+        projectFiles["login.html"] = extractedCode;
+        appendChat('ai', "✅ **An gina `login.html` da gaske!** Na kiyaye dukkan siffar da ka roƙa a hoton/umarnin ka.");
       } else if (currentStep === 2) {
-        await processStep2(userText, userImg);
+        projectFiles["dashboard.html"] = extractedCode;
+        appendChat('ai', "✅ **An gina `dashboard.html` da gaske!** Na tsara dukkan sashen gudanarwa.");
       } else if (currentStep === 3) {
-        await processStep3(userText, userImg);
+        projectFiles["app.js"] = extractedCode;
+        appendChat('ai', "✅ **An gina `app.js`!** An rubuta ayyuka da logiko na gaske.");
       } else if (currentStep === 4) {
-        await processStep4(userText, userImg);
+        projectFiles["style.css"] = extractedCode;
+        appendChat('ai', "✅ **An gina `style.css`!** An gyara zane-zane da kyawun siffa.");
       }
+
+      document.getElementById('nextActionArea').classList.remove('hidden');
     }
+  } catch (err) {
+    appendChat('ai', "❌ An samu kuskure wajen gina fayil ɗin.");
+  }
+}
 
-    async function callAi(promptText) {
-      addAiMessage("⏳ AI tana aiki a kan wannan matakin...");
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: promptText })
-        });
-        const data = await res.json();
-        return data.reply || "Gafara dai, an samu kuskure.";
-      } catch (err) {
-        return "An samu kuskure wajen haɗawa da Server.";
-      }
-    }
+function goToNextStep() {
+  document.getElementById('nextActionArea').classList.add('hidden');
+  currentStep++;
 
-    async function processStep1(text, img) {
-      const prompt = "User is defining Step 1 (App Name & Login/Register UI). User Input: " + text + ". Build ONLY pure HTML/TailwindCSS code for screen-login wrapped inside <div id='screen-login'>. Also provide a polite chat response in Hausa explaining what was generated. Format response as: CHAT: [Hausa text] | CODE: [HTML code].";
-      
-      const reply = await callAi(prompt);
-      const parts = reply.split('| CODE:');
-      
-      let chatText = parts[0].replace('CHAT:', '').trim();
-      if (parts[1]) appData.loginCode = cleanCode(parts[1]);
+  if (currentStep === 2) {
+    document.getElementById('stepLabel').innerText = "Mataki 2: Gina Shafin Dashboard (dashboard.html)";
+    document.getElementById('fileCount').innerText = "Files: 1/4";
+    appendChat('ai', "**MATAKI 2:** Tura min hoto ko rubuta umarni na yadda kake son shafin **Dashboard/Home Screen** (`dashboard.html`) ya kasance.");
+  } else if (currentStep === 3) {
+    document.getElementById('stepLabel').innerText = "Mataki 3: Rubuta JavaScript Logic (app.js)";
+    document.getElementById('fileCount').innerText = "Files: 2/4";
+    appendChat('ai', "**MATAKI 3:** Bayyana dukkan ayyukan da maballan cikakken app din za su yi. Zan rubuta fayil ɗin `app.js` na daban.");
+  } else if (currentStep === 4) {
+    document.getElementById('stepLabel').innerText = "Mataki 4: Tsarin Styling (style.css) & Gamawa";
+    document.getElementById('fileCount').innerText = "Files: 3/4";
+    appendChat('ai', "**MATAKI 4:** Rubuta launuka ko siffar gyara da kake so gaba ɗaya. Zan fitar da `style.css` sannan in baka dukkan fayilolin.");
+  } else if (currentStep > 4) {
+    document.getElementById('fileCount').innerText = "Files: 4/4";
+    showFinalDownloads();
+  }
+}
 
-      addAiMessage(chatText);
-      addAiMessage("Irin tsarin Login ɗin da na tsara muku kenan. Idan ya yi kyau, danna maballin **Wuce Mataki Na Gaba ➡️** a sama.", "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=500&auto=format&fit=crop");
-      
-      document.getElementById('nextStepBtn').classList.remove('hidden');
-    }
+function showFinalDownloads() {
+  const container = document.getElementById('finalDownloadArea');
+  const list = document.getElementById('fileList');
+  list.innerHTML = `
+    📄 login.html (${projectFiles["login.html"].length} bytes)<br>
+    📄 dashboard.html (${projectFiles["dashboard.html"].length} bytes)<br>
+    📄 app.js (${projectFiles["app.js"].length} bytes)<br>
+    📄 style.css (${projectFiles["style.css"].length} bytes)
+  `;
+  container.classList.remove('hidden');
+}
 
-    async function processStep2(text, img) {
-      const prompt = "User is defining Step 2 (Dashboard / Home Screen UI). User Input: " + text + ". Build ONLY pure HTML/TailwindCSS code for screen-dashboard wrapped inside <div id='screen-dashboard'>. Format response as: CHAT: [Hausa text] | CODE: [HTML code].";
-
-      const reply = await callAi(prompt);
-      const parts = reply.split('| CODE:');
-
-      let chatText = parts[0].replace('CHAT:', '').trim();
-      if (parts[1]) appData.dashboardCode = cleanCode(parts[1]);
-
-      addAiMessage(chatText);
-      addAiMessage("Nayi nasarar tsara fuskarsar Dashboard! Idan ka gamsu, danna maballin **Wuce Mataki Na Gaba ➡️**.", "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop");
-      
-      document.getElementById('nextStepBtn').classList.remove('hidden');
-    }
-
-    async function processStep3(text, img) {
-      const prompt = "User is defining Step 3 (Logic & Functionality). User Input: " + text + ". Write JS logic to manage buttons, forms, and switching between screen-login and screen-dashboard. Format as: CHAT: [Hausa text] | CODE: [JS code inside <script>].";
-
-      const reply = await callAi(prompt);
-      const parts = reply.split('| CODE:');
-
-      let chatText = parts[0].replace('CHAT:', '').trim();
-      if (parts[1]) appData.logicCode = cleanCode(parts[1]);
-
-      addAiMessage(chatText);
-      addAiMessage("Madalla! An adana dukkan hanyoyin aiki da maballai. Danna **Wuce Mataki Na Gaba ➡️** don saita API Keys.");
-      
-      document.getElementById('nextStepBtn').classList.remove('hidden');
-    }
-
-    async function processStep4(text, img) {
-      appData.apiKeys = text;
-      addAiMessage("Madalla! Ina haɗe dukkan Lambobin (Module 1, 2, 3 & API Keys) zuwa cikakken App guda ɗaya...");
-
-      appData.fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appData.appName + '</title>\n  <script src="https://cdn.tailwindcss.com"><' + '/script>\n  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n</head>\n<body class="bg-slate-950 text-white font-sans min-h-screen">\n\n  <!-- MODULE 1: LOGIN UI -->\n  ' + appData.loginCode + '\n\n  <!-- MODULE 2: DASHBOARD UI -->\n  ' + appData.dashboardCode + '\n\n  <!-- MODULE 3: LOGIC & APIS -->\n  ' + appData.logicCode + '\n\n</body>\n</html>';
-
-      const blob = new Blob([appData.fullCode], { type: 'text/html' });
-      const appUrl = URL.createObjectURL(blob);
-
-      const finalOutputHtml = "🎉 **TAYA MURNAR GINA APP ƊINKA!**\n\nAn kammala haɗa dukkan matakai 4 cikin nasara.\n\n🔗 **Direct URL Link ɗin App ɗinka:**\n" + appUrl + "\n\nZa ka iya zaɓar ɗaya daga cikin waɗannan zaɓuɓɓukan:" +
-      '<div class="mt-3 flex flex-col gap-2">' +
-        '<button onclick="downloadAppHtml()" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 px-3 rounded-lg font-bold text-xs">📥 Sauke Cikakken HTML File</button>' +
-        '<a href="https://www.webintoapp.com" target="_blank" class="bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 px-3 rounded-lg font-bold text-xs text-center">📲 Maida Shi Cikakken APK (WebIntoApp)</a>' +
-      '</div>';
-
-      addAiMessage(finalOutputHtml);
-    }
-
-    function nextStep() {
-      currentStep++;
-      document.getElementById('nextStepBtn').classList.add('hidden');
-
-      if (currentStep === 2) {
-        document.getElementById('stepTitle').innerText = "Mataki 2: Zana Fuskarsar Dashboard";
-        addAiMessage("**MATAKI 2:** Yanzu kuma mu koma kan **Dashboard/Home Screen**. Wadanne abubuwa ne kake so su kasance a ciki? (Za ka iya aiko hoto ko bayani).");
-      } else if (currentStep === 3) {
-        document.getElementById('stepTitle').innerText = "Mataki 3: Ayyukan App & Logic";
-        addAiMessage("**MATAKI 3:** Bayyana min yadda kake son maballan cikin Dashboard din su rika aiki dalla-dalla.");
-      } else if (currentStep === 4) {
-        document.getElementById('stepTitle').innerText = "Mataki 4: API Keys & Fitar da App";
-        addAiMessage("**MATAKI 4 (Na Ƙarshe):** Shin App ɗinka yana buƙatar wani **API KEY** ko haɗin Database? Idan akwai tura min ko ka rubuta 'Babu', sannan danna Send don na fitar da App ɗin!");
-      }
-    }
-
-    function cleanCode(str) {
-      return str.replace(/^```(html|javascript|js)?\s*/i, '').replace(/```$/g, '').trim();
-    }
-
-    function downloadAppHtml() {
-      const blob = new Blob([appData.fullCode], { type: 'text/html;charset=utf-8' });
+function downloadAllFiles() {
+  for (let fileName in projectFiles) {
+    if (projectFiles[fileName]) {
+      const blob = new Blob([projectFiles[fileName]], { type: 'text/plain;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = appData.appName.replace(/\s+/g, '_') + '.html';
+      a.download = fileName;
       a.click();
     }
-  </script>
+  }
+}
+
+function cleanCode(str) {
+  return str.replace(/^```(html|javascript|js|css)?\s*/i, '').replace(/```$/g, '').trim();
+}
+</script>
 
 </body>
 </html>
