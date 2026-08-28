@@ -60,36 +60,30 @@
       fullCode: ""
     };
 
-    window.onload = () => {
+    window.onload = function() {
       addAiMessage("Sannu! Ni ce AI mai gina maka App kamar tsarin AppCreator24. 👋\n\n**MATAKI 1:** Menene sunan App ɗinka da kake son gina? Sannan yaya kake son shafin **Login da Rijista** ya kasance? (Za ka iya tura min hoto ko rubuta cikakken bayani).");
     };
 
-    function addAiMessage(text, imgUrl = null) {
+    function addAiMessage(text, imgUrl) {
       const chatBox = document.getElementById('chatBox');
-      let imgHtml = imgUrl ? `<img src="${imgUrl}" class="max-w-xs rounded-lg mt-2 border border-slate-700">` : '';
+      let imgHtml = imgUrl ? '<img src="' + imgUrl + '" class="max-w-xs rounded-lg mt-2 border border-slate-700">' : '';
       
-      const msgStr = `
-        <div class="flex flex-col items-start">
-          <div class="msg-ai p-3 text-xs text-slate-200 max-w-[85%] leading-relaxed border border-slate-800">
-            ${text.replace(/\n/g, '<br>')}
-            ${imgHtml}
-          </div>
-        </div>`;
+      const msgStr = '<div class="flex flex-col items-start">' +
+        '<div class="msg-ai p-3 text-xs text-slate-200 max-w-[85%] leading-relaxed border border-slate-800">' +
+          text.replace(/\n/g, '<br>') + imgHtml +
+        '</div></div>';
       chatBox.innerHTML += msgStr;
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function addUserMessage(text, imgUrl = null) {
+    function addUserMessage(text, imgUrl) {
       const chatBox = document.getElementById('chatBox');
-      let imgHtml = imgUrl ? `<img src="${imgUrl}" class="max-w-xs rounded-lg mt-2 border border-slate-200">` : '';
+      let imgHtml = imgUrl ? '<img src="' + imgUrl + '" class="max-w-xs rounded-lg mt-2 border border-slate-200">' : '';
 
-      const msgStr = `
-        <div class="flex flex-col items-end">
-          <div class="msg-user p-3 text-xs text-white max-w-[85%] leading-relaxed">
-            ${text}
-            ${imgHtml}
-          </div>
-        </div>`;
+      const msgStr = '<div class="flex flex-col items-end">' +
+        '<div class="msg-user p-3 text-xs text-white max-w-[85%] leading-relaxed">' +
+          text + imgHtml +
+        '</div></div>';
       chatBox.innerHTML += msgStr;
       chatBox.scrollTop = chatBox.scrollHeight;
     }
@@ -119,7 +113,6 @@
       input.value = "";
       selectedImageBase64 = "";
 
-      // Trigger AI logic based on Step
       if (currentStep === 1) {
         await processStep1(userText, userImg);
       } else if (currentStep === 2) {
@@ -147,7 +140,7 @@
     }
 
     async function processStep1(text, img) {
-      const prompt = `User is defining Step 1 (App Name & Login/Register UI). User Input: "${text}". Build ONLY pure HTML/TailwindCSS code for screen-login wrapped inside <div id="screen-login">. Also provide a polite chat response in Hausa explaining what was generated. Format response as: CHAT: [Hausa text] | CODE: [HTML code].`;
+      const prompt = "User is defining Step 1 (App Name & Login/Register UI). User Input: " + text + ". Build ONLY pure HTML/TailwindCSS code for screen-login wrapped inside <div id='screen-login'>. Also provide a polite chat response in Hausa explaining what was generated. Format response as: CHAT: [Hausa text] | CODE: [HTML code].";
       
       const reply = await callAi(prompt);
       const parts = reply.split('| CODE:');
@@ -156,15 +149,13 @@
       if (parts[1]) appData.loginCode = cleanCode(parts[1]);
 
       addAiMessage(chatText);
-      
-      // Sample design reference image sent by AI
       addAiMessage("Irin tsarin Login ɗin da na tsara muku kenan. Idan ya yi kyau, danna maballin **Wuce Mataki Na Gaba ➡️** a sama.", "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=500&auto=format&fit=crop");
       
       document.getElementById('nextStepBtn').classList.remove('hidden');
     }
 
     async function processStep2(text, img) {
-      const prompt = `User is defining Step 2 (Dashboard / Home Screen UI). User Input: "${text}". Build ONLY pure HTML/TailwindCSS code for screen-dashboard wrapped inside <div id="screen-dashboard">. Format response as: CHAT: [Hausa text] | CODE: [HTML code].`;
+      const prompt = "User is defining Step 2 (Dashboard / Home Screen UI). User Input: " + text + ". Build ONLY pure HTML/TailwindCSS code for screen-dashboard wrapped inside <div id='screen-dashboard'>. Format response as: CHAT: [Hausa text] | CODE: [HTML code].";
 
       const reply = await callAi(prompt);
       const parts = reply.split('| CODE:');
@@ -179,7 +170,7 @@
     }
 
     async function processStep3(text, img) {
-      const prompt = `User is defining Step 3 (Logic & Functionality). User Input: "${text}". Write JS logic to manage buttons, forms, and switching between screen-login and screen-dashboard. Format as: CHAT: [Hausa text] | CODE: [JS code inside <script>].`;
+      const prompt = "User is defining Step 3 (Logic & Functionality). User Input: " + text + ". Write JS logic to manage buttons, forms, and switching between screen-login and screen-dashboard. Format as: CHAT: [Hausa text] | CODE: [JS code inside <script>].";
 
       const reply = await callAi(prompt);
       const parts = reply.split('| CODE:');
@@ -197,51 +188,16 @@
       appData.apiKeys = text;
       addAiMessage("Madalla! Ina haɗe dukkan Lambobin (Module 1, 2, 3 & API Keys) zuwa cikakken App guda ɗaya...");
 
-      // Build Combined HTML
-      appData.fullCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${appData.appName}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-slate-950 text-white font-sans min-h-screen">
-
-  <!-- MODULE 1: LOGIN UI -->
-  ${appData.loginCode}
-
-  <!-- MODULE 2: DASHBOARD UI -->
-  ${appData.dashboardCode}
-
-  <!-- MODULE 3: LOGIC & APIS -->
-  ${appData.logicCode}
-
-</body>
-</html>`;
+      appData.fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>' + appData.appName + '</title>\n  <script src="https://cdn.tailwindcss.com"><' + '/script>\n  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n</head>\n<body class="bg-slate-950 text-white font-sans min-h-screen">\n\n  <!-- MODULE 1: LOGIN UI -->\n  ' + appData.loginCode + '\n\n  <!-- MODULE 2: DASHBOARD UI -->\n  ' + appData.dashboardCode + '\n\n  <!-- MODULE 3: LOGIC & APIS -->\n  ' + appData.logicCode + '\n\n</body>\n</html>';
 
       const blob = new Blob([appData.fullCode], { type: 'text/html' });
       const appUrl = URL.createObjectURL(blob);
 
-      const finalOutputHtml = `
-      🎉 **TAYA MURNAR GINA APP ƊINKA!**
-      
-      An kammala haɗa dukkan matakai 4 cikin nasara.
-
-      🔗 **Direct URL Link ɗin App ɗinka:**
-      \`${appUrl}\`
-
-      Za ka iya zaɓar ɗaya daga cikin waɗannan zaɓuɓɓukan:
-      
-      <div class="mt-3 flex flex-col gap-2">
-        <button onclick="downloadAppHtml()" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 px-3 rounded-lg font-bold text-xs">
-          📥 Sauke Cikakken HTML File
-        </button>
-        <a href="https://www.webintoapp.com" target="_blank" class="bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 px-3 rounded-lg font-bold text-xs text-center">
-          📲 Maida Shi Cikakken APK (WebIntoApp)
-        </a>
-      </div>`;
+      const finalOutputHtml = "🎉 **TAYA MURNAR GINA APP ƊINKA!**\n\nAn kammala haɗa dukkan matakai 4 cikin nasara.\n\n🔗 **Direct URL Link ɗin App ɗinka:**\n" + appUrl + "\n\nZa ka iya zaɓar ɗaya daga cikin waɗannan zaɓuɓɓukan:" +
+      '<div class="mt-3 flex flex-col gap-2">' +
+        '<button onclick="downloadAppHtml()" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 px-3 rounded-lg font-bold text-xs">📥 Sauke Cikakken HTML File</button>' +
+        '<a href="https://www.webintoapp.com" target="_blank" class="bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 px-3 rounded-lg font-bold text-xs text-center">📲 Maida Shi Cikakken APK (WebIntoApp)</a>' +
+      '</div>';
 
       addAiMessage(finalOutputHtml);
     }
@@ -270,7 +226,7 @@
       const blob = new Blob([appData.fullCode], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `${appData.appName}.html`;
+      a.download = appData.appName.replace(/\s+/g, '_') + '.html';
       a.click();
     }
   </script>
