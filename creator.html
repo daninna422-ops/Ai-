@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App Builder - Multi-File AI Builder</title>
+  <title>Center App Builder - Fast Vision Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -17,7 +17,6 @@
     <span id="fileCount" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-400">Files: 0/4</span>
   </header>
 
-  <!-- CHAT WINDOW -->
   <div id="chatBox" class="h-96 bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-y-auto space-y-3 text-xs">
     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
       👋 **Sannu! Za mu gina Cikakken App mai Fayiloli Daban-Daban.**<br><br>
@@ -25,16 +24,14 @@
     </div>
   </div>
 
-  <!-- IMAGE PREVIEW AREA -->
   <div id="imgPreviewArea" class="hidden my-2 p-2 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
     <div class="flex items-center gap-2">
       <img id="previewImg" class="w-12 h-12 object-cover rounded">
-      <span class="text-xs text-sky-400">An shirya hoto don AI ta duba</span>
+      <span class="text-xs text-sky-400">An rage nauyin hoto (Optimized)</span>
     </div>
     <button onclick="clearImage()" class="text-rose-500 font-bold text-xs px-2">X</button>
   </div>
 
-  <!-- INPUT AREA -->
   <div class="mt-3 flex gap-2">
     <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl flex items-center justify-center">
       <i class="fa-solid fa-image"></i>
@@ -46,7 +43,6 @@
     </button>
   </div>
 
-  <!-- NEXT STEP AREA -->
   <div id="nextActionArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center">
     <span class="text-xs text-emerald-400 font-semibold">An gina wannan fayil ɗin cikin nasara!</span>
     <button onclick="goToNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 rounded-lg font-bold">
@@ -54,7 +50,6 @@
     </button>
   </div>
 
-  <!-- DOWNLOAD ZIP / PROJECT AREA -->
   <div id="finalDownloadArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-3">
     <p class="text-xs text-sky-400 font-bold">🎉 AN KAMMALA GINA DUKKAN FAYILOLIN APP ƊIN!</p>
     <div id="fileList" class="text-xs space-y-1 text-slate-300 font-mono"></div>
@@ -74,6 +69,7 @@ let projectFiles = {
   "style.css": ""
 };
 
+// COMPRESS IMAGE TO FIT VERCEL PAYLOAD LIMIT (< 500KB)
 function previewSelectedImage(e) {
   const file = e.target.files[0];
   if (file) {
@@ -83,7 +79,7 @@ function previewSelectedImage(e) {
       img.src = evt.target.result;
       img.onload = function() {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
+        const MAX_WIDTH = 500; // Small width for fast response
         const scaleFactor = MAX_WIDTH / img.width;
         
         if (img.width > MAX_WIDTH) {
@@ -97,7 +93,8 @@ function previewSelectedImage(e) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        currentBase64Image = canvas.toDataURL('image/jpeg', 0.7);
+        // Low quality JPEG compression for extreme speed
+        currentBase64Image = canvas.toDataURL('image/jpeg', 0.5);
         document.getElementById('previewImg').src = currentBase64Image;
         document.getElementById('imgPreviewArea').classList.remove('hidden');
       };
@@ -137,7 +134,7 @@ async function processCurrentStep() {
   appendChat('ai', "⏳ AI tana aiki akan gina wannan fayil ɗin dangane da umarnin ka...");
 
   let payload = {
-    message: promptText,
+    message: promptText || "Generate code based on this layout image",
     image: currentBase64Image || null,
     step: currentStep
   };
@@ -153,11 +150,16 @@ async function processCurrentStep() {
     clearImage();
 
     if (data.reply) {
+      if (data.reply.startsWith("❌")) {
+        appendChat('ai', data.reply);
+        return;
+      }
+
       let extractedCode = cleanCode(data.reply);
 
       if (currentStep === 1) {
         projectFiles["login.html"] = extractedCode;
-        appendChat('ai', "✅ **An gina `login.html` da gaske!** Na kiyaye dukkan siffar da ka roƙa a hoton/umarnin ka.");
+        appendChat('ai', "✅ **An gina `login.html` da gaske!** Na kiyaye dukkan siffar da ka roƙa.");
       } else if (currentStep === 2) {
         projectFiles["dashboard.html"] = extractedCode;
         appendChat('ai', "✅ **An gina `dashboard.html` da gaske!** Na tsara dukkan sashen gudanarwa.");
@@ -170,9 +172,11 @@ async function processCurrentStep() {
       }
 
       document.getElementById('nextActionArea').classList.remove('hidden');
+    } else {
+      appendChat('ai', "❌ Backend bai dawo da sakamako ba: " + JSON.stringify(data));
     }
   } catch (err) {
-    appendChat('ai', "❌ An samu kuskure wajen haɗawa da server.");
+    appendChat('ai', "❌ Error: " + err.message);
   }
 }
 
