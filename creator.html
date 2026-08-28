@@ -3,347 +3,277 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Visual Builder</title>
+  <title>Center App Builder - Interactive AI Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { background-color: #0b132b; color: #f8fafc; font-family: sans-serif; }
-    .ui-card { border: 2px solid #1c2541; transition: all 0.3s; cursor: pointer; }
-    .ui-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
-    .ui-card.selected { border-color: #38bdf8; background-color: #1c2541; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-    .img-preview { height: 140px; object-fit: cover; border-radius: 6px; }
+    body { background-color: #0b0f19; color: #f8fafc; font-family: sans-serif; }
+    .chat-box { height: calc(100vh - 240px); overflow-y: auto; }
+    .msg-ai { background-color: #1e293b; border-radius: 12px 12px 12px 0px; }
+    .msg-user { background-color: #0284c7; border-radius: 12px 12px 0px 12px; }
   </style>
 </head>
-<body class="p-3 md:p-6 max-w-5xl mx-auto">
+<body class="flex flex-col h-screen max-w-4xl mx-auto p-3">
 
-  <header class="flex justify-between items-center mb-6 border-b border-slate-800 pb-3">
-    <h1 class="text-lg font-bold text-sky-400"><i class="fa-solid fa-wand-magic-sparkles"></i> Visual App Creator</h1>
-    <a href="index.html" class="text-xs bg-slate-800 border border-slate-700 px-3 py-1.5 rounded text-slate-300">💬 Chat</a>
+  <!-- HEADER & STEP TRACKER -->
+  <header class="bg-slate-900 border border-slate-800 p-3 rounded-xl mb-3 flex justify-between items-center">
+    <div>
+      <h1 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-robot"></i> Center App Builder</h1>
+      <p id="stepTitle" class="text-[11px] text-emerald-400 font-semibold">Mataki 1: Ginshikin App & Login/Rijista</p>
+    </div>
+    <div class="flex gap-2">
+      <button id="nextStepBtn" onclick="nextStep()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-bold">
+        Wuce Mataki Na Gaba ➡️
+      </button>
+      <a href="index.html" class="bg-slate-800 text-xs px-3 py-2 rounded-lg text-slate-300">Chat</a>
+    </div>
   </header>
 
-  <div class="grid grid-cols-4 gap-2 mb-6 text-center text-xs font-bold text-slate-400">
-    <div id="st1" class="p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30">1. Category</div>
-    <div id="st2" class="p-2 bg-slate-900 rounded-lg border border-slate-800">2. Login UI</div>
-    <div id="st3" class="p-2 bg-slate-900 rounded-lg border border-slate-800">3. Dashboard</div>
-    <div id="st4" class="p-2 bg-slate-900 rounded-lg border border-slate-800">4. Compile Code</div>
+  <!-- CHAT MESSAGES AREA -->
+  <div id="chatBox" class="chat-box bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-4 mb-3">
+    <!-- Messages will be dynamically added here -->
   </div>
 
-  <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6 shadow-2xl">
-
-    <div id="step1" class="space-y-4">
-      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-shapes"></i> MATAKI 1: Zaɓi Nau'in App da Kake Son Gina (Zaɓi 1-10)</h2>
-      
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center" id="catGrid">
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Banki & FinTech', this)">
-          <i class="fa-solid fa-wallet text-3xl text-emerald-400 mb-2"></i>
-          <p class="text-xs font-bold">FinTech / Banki</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Chat & Messaging', this)">
-          <i class="fa-solid fa-comments text-3xl text-blue-400 mb-2"></i>
-          <p class="text-xs font-bold">Chat & Social</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Makaranta & Learning', this)">
-          <i class="fa-solid fa-graduation-cap text-3xl text-amber-400 mb-2"></i>
-          <p class="text-xs font-bold">E-Learning</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Kasuwanci & Store', this)">
-          <i class="fa-solid fa-cart-shopping text-3xl text-purple-400 mb-2"></i>
-          <p class="text-xs font-bold">E-Commerce</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('AI & Assistant', this)">
-          <i class="fa-solid fa-brain text-3xl text-rose-400 mb-2"></i>
-          <p class="text-xs font-bold">AI Assistant</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Gaming App', this)">
-          <i class="fa-solid fa-gamepad text-3xl text-indigo-400 mb-2"></i>
-          <p class="text-xs font-bold">Game App</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Watch Ads & Earn', this)">
-          <i class="fa-solid fa-sack-dollar text-3xl text-yellow-400 mb-2"></i>
-          <p class="text-xs font-bold">Watch & Earn</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Online Freelancing', this)">
-          <i class="fa-solid fa-laptop-code text-3xl text-teal-400 mb-2"></i>
-          <p class="text-xs font-bold">Online Work</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Crypto & Investment', this)">
-          <i class="fa-solid fa-chart-line text-3xl text-cyan-400 mb-2"></i>
-          <p class="text-xs font-bold">Investment</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setCategory('Music & Video Stream', this)">
-          <i class="fa-solid fa-play text-3xl text-red-500 mb-2"></i>
-          <p class="text-xs font-bold">Media Streaming</p>
-        </div>
-      </div>
-
-      <input type="text" id="customCat" placeholder="Ko ka rubuta naka anan..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white">
-
-      <button onclick="nextStep(1)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm mt-4">
-        Cigaba zuwa Mataki na 2 (Continue) ➡️
-      </button>
-    </div>
-
-    <div id="step2" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-lock"></i> MATAKI 2: Zaɓi Fuskarsar Login & Register (Samfurin Hotuna)</h2>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="loginCards">
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Modern Blue Finance Login', this)">
-          <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Option A: Modern Blue Auth</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Minimalist Clean White Auth', this)">
-          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Option B: Clean White Minimal</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setLogin('Dark Purple Crypto Auth', this)">
-          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Option C: Dark Neon Glass</p>
-        </div>
-      </div>
-
-      <textarea id="customLogin" placeholder="Ko ka rubuta irin tsarin shigar da kake so a zana..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-16"></textarea>
-
-      <button onclick="nextStep(2)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm">
-        Cigaba zuwa Mataki na 3 (Continue) ➡️
-      </button>
-    </div>
-
-    <div id="step3" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-table-cells font-bold"></i> MATAKI 3: Zaɓi Fuskarsar Dashboard / Home (Samfurin Hotuna)</h2>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="homeCards">
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('FinTech Balance Grid Cards', this)">
-          <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Dashboard A: Wallet & Stats Grid</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('E-commerce Feed List UI', this)">
-          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Dashboard B: Analytics & Feeds</p>
-        </div>
-        <div class="ui-card p-3 rounded-xl bg-slate-950" onclick="setDashboard('Social Chat Sidebar UI', this)">
-          <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=400&q=80" class="w-full img-preview mb-2">
-          <p class="text-xs font-bold text-center">Dashboard C: Chat & Stream Layout</p>
-        </div>
-      </div>
-
-      <textarea id="customDash" placeholder="Ko ka rubuta tsarin Home/Dashboard din da kake so..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-16"></textarea>
-
-      <button onclick="nextStep(3)" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg text-sm">
-        Cigaba zuwa Mataki na 4 (Continue) ➡️
-      </button>
-    </div>
-
-    <div id="step4" class="hidden space-y-4">
-      <h2 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-code"></i> MATAKI 4: Bayanin Aiki da Rubuta Cikakkun Lambobi (4000+ Lines)</h2>
-      
-      <input type="text" id="appName" placeholder="Sunan App ɗinka (Misali: Apex Mobile)" class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white">
-      <textarea id="appLogic" placeholder="Bayyana dukkan abubuwan da kake son App din ya sarrafa a ciki..." class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs text-white h-24"></textarea>
-
-      <button id="compileBtn" onclick="compileFullApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-lg text-sm">
-        🚀 Haɗa Dukkan Code Din Matakan Don Samun Cikakken App
-      </button>
-
-      <div id="output" class="hidden flex-col gap-4 pt-4 border-t border-slate-800">
-        <div class="text-sky-400 font-bold text-sm">📱 Preview Din App Din Ka:</div>
-        <iframe id="previewFrame" class="w-full h-96 bg-white rounded-xl border border-slate-700"></iframe>
-
-        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
-          <label class="text-xs text-amber-400 font-bold block">🔗 Link ɗin App (An shirya don WebIntoApp):</label>
-          <div class="flex gap-2">
-            <input type="text" id="appUrl" readonly class="w-full bg-slate-900 border border-slate-800 p-2 rounded text-xs text-slate-300">
-            <button onclick="copyLink()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 rounded text-white font-bold">Copy Link</button>
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-3">
-          <button onclick="downloadHtml()" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg text-sm">
-            📥 Sauke HTML File
-          </button>
-          <a href="https://www.webintoapp.com" target="_blank" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-lg text-sm text-center">
-            📲 Maida Shi APK (WebIntoApp)
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div id="spin" class="hidden text-center py-6">
-      <i class="fa-solid fa-spinner fa-spin text-3xl text-sky-400 mb-2"></i>
-      <p class="text-xs text-slate-400" id="spinTxt">AI Yana haɗa lambobin matakin...</p>
-    </div>
-
+  <!-- INPUT AREA WITH IMAGE UPLOAD -->
+  <div class="bg-slate-900 border border-slate-800 p-2 rounded-xl flex items-center gap-2">
+    <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl">
+      <i class="fa-solid fa-image"></i>
+      <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+    </label>
+    <input type="text" id="userInput" placeholder="Rubuta sakonka nan ko amsa tambayar AI..." class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none border-sky-500" onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()" class="bg-sky-500 hover:bg-sky-600 text-slate-950 px-4 py-3 rounded-xl font-bold text-xs">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
   </div>
 
-<script>
-let appStore = {
-  category: '',
-  loginUI: '',
-  dashUI: '',
-  loginCodeChunk: '',
-  dashCodeChunk: '',
-  finalCode: ''
-};
-
-function setCategory(val, el) {
-  appStore.category = val;
-  document.querySelectorAll('#catGrid .ui-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function setLogin(val, el) {
-  appStore.loginUI = val;
-  document.querySelectorAll('#loginCards .ui-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function setDashboard(val, el) {
-  appStore.dashUI = val;
-  document.querySelectorAll('#homeCards .ui-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function showSpin(txt) {
-  document.getElementById('spinTxt').innerText = txt;
-  document.getElementById('spin').classList.remove('hidden');
-}
-
-function hideSpin() {
-  document.getElementById('spin').classList.add('hidden');
-}
-
-async function nextStep(step) {
-  if (step === 1) {
-    const custom = document.getElementById('customCat').value.trim();
-    if (custom) appStore.category = custom;
-    if (!appStore.category) return alert("Zaɓi nau'in App!");
-
-    showSpin("AI Yana rubuta Module 1 Code (Core Engine)...");
+  <script>
+    let currentStep = 1;
+    let selectedImageBase64 = "";
     
-    // AI Step 1 Code Generation
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `Generate core HTML head, Tailwind CSS CDN, and base framework for category: ${appStore.category}. Return RAW code only.` })
-      });
-      const data = await res.json();
-      appStore.loginCodeChunk = data.reply || "";
-    } catch(e) {}
+    // Code modules storage
+    let appData = {
+      loginCode: "",
+      dashboardCode: "",
+      logicCode: "",
+      apiKeys: "",
+      appName: "MyCenterApp",
+      fullCode: ""
+    };
 
-    hideSpin();
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-    document.getElementById('st1').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
-    document.getElementById('st2').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
-  } 
-  
-  else if (step === 2) {
-    const custom = document.getElementById('customLogin').value.trim();
-    if (custom) appStore.loginUI = custom;
-    if (!appStore.loginUI) return alert("Zaɓi fuskarsar Login!");
+    window.onload = () => {
+      addAiMessage("Sannu! Ni ce AI mai gina maka App kamar tsarin AppCreator24. 👋\n\n**MATAKI 1:** Menene sunan App ɗinka da kake son gina? Sannan yaya kake son shafin **Login da Rijista** ya kasance? (Za ka iya tura min hoto ko rubuta cikakken bayani).");
+    };
 
-    showSpin("AI Yana rubuta Module 2 Code (Auth Engine)...");
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `Generate HTML/JS for Login & Registration module using style: ${appStore.loginUI}. Return RAW code.` })
-      });
-      const data = await res.json();
-      appStore.dashCodeChunk = data.reply || "";
-    } catch(e) {}
-
-    hideSpin();
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step3').classList.remove('hidden');
-    document.getElementById('st2').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
-    document.getElementById('st3').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
-  } 
-
-  else if (step === 3) {
-    const custom = document.getElementById('customDash').value.trim();
-    if (custom) appStore.dashUI = custom;
-    if (!appStore.dashUI) return alert("Zaɓi fuskarsar Dashboard!");
-
-    document.getElementById('step3').classList.add('hidden');
-    document.getElementById('step4').classList.remove('hidden');
-    document.getElementById('st3').className = "p-2 bg-slate-900 rounded-lg border border-slate-800 text-slate-500";
-    document.getElementById('st4').className = "p-2 bg-sky-900/50 text-sky-400 rounded-lg border border-sky-500/30";
-  }
-}
-
-async function compileFullApp() {
-  const name = document.getElementById('appName').value.trim() || 'My Center App';
-  const logic = document.getElementById('appLogic').value.trim();
-
-  const compileBtn = document.getElementById('compileBtn');
-  const output = document.getElementById('output');
-  const frame = document.getElementById('previewFrame');
-  const appUrl = document.getElementById('appUrl');
-
-  compileBtn.disabled = true;
-  showSpin("AI Yana game dukkan lambobin (dubu 4+ lines) waje guda...");
-
-  const compilePrompt = `Assemble and generate a massive, fully-functional single-file HTML Web Application.
-App Title: "${name}"
-Category: "${appStore.category}"
-Login Module: "${appStore.loginUI}"
-Dashboard Module: "${appStore.dashUI}"
-Functional Logic: "${logic}"
-
-Instructions:
-1. Merge the visual interfaces into a seamless interactive web app.
-2. Provide switchable screens (Login -> Dashboard).
-3. Use Tailwind CSS & FontAwesome.
-4. Include working JavaScript handlers.
-5. Return ONLY pure clean HTML code. NO markdown formatting.`;
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: compilePrompt })
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.reply) {
-      appStore.finalCode = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-      frame.srcdoc = appStore.finalCode;
-
-      const blob = new Blob([appStore.finalCode], { type: 'text/html' });
-      appUrl.value = URL.createObjectURL(blob);
-
-      output.classList.remove('hidden');
-      output.classList.add('flex');
-    } else {
-      alert("❌ " + (data.error || "An samu matsala."));
+    function addAiMessage(text, imgUrl = null) {
+      const chatBox = document.getElementById('chatBox');
+      let imgHtml = imgUrl ? `<img src="${imgUrl}" class="max-w-xs rounded-lg mt-2 border border-slate-700">` : '';
+      
+      const msgStr = `
+        <div class="flex flex-col items-start">
+          <div class="msg-ai p-3 text-xs text-slate-200 max-w-[85%] leading-relaxed border border-slate-800">
+            ${text.replace(/\n/g, '<br>')}
+            ${imgHtml}
+          </div>
+        </div>`;
+      chatBox.innerHTML += msgStr;
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
-  } catch (err) {
-    alert("❌ Kuskure wajen game lambobin.");
-  } finally {
-    hideSpin();
-    compileBtn.disabled = false;
-  }
-}
 
-function downloadHtml() {
-  if (!appStore.finalCode) return;
-  const name = document.getElementById('appName').value.trim() || 'My_App';
-  const blob = new Blob([appStore.finalCode], { type: 'text/html;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${name.replace(/\s+/g, '_')}.html`;
-  a.click();
-}
+    function addUserMessage(text, imgUrl = null) {
+      const chatBox = document.getElementById('chatBox');
+      let imgHtml = imgUrl ? `<img src="${imgUrl}" class="max-w-xs rounded-lg mt-2 border border-slate-200">` : '';
 
-function copyLink() {
-  const input = document.getElementById('appUrl');
-  input.select();
-  document.execCommand('copy');
-  alert("📋 An kwashe Link ɗin App din ka!");
-}
-</script>
+      const msgStr = `
+        <div class="flex flex-col items-end">
+          <div class="msg-user p-3 text-xs text-white max-w-[85%] leading-relaxed">
+            ${text}
+            ${imgHtml}
+          </div>
+        </div>`;
+      chatBox.innerHTML += msgStr;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          selectedImageBase64 = evt.target.result;
+          addUserMessage("📷 An haɗa hoto:", selectedImageBase64);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text && !selectedImageBase64) return;
+
+      const userText = text;
+      const userImg = selectedImageBase64;
+      
+      if (text) addUserMessage(text);
+      
+      input.value = "";
+      selectedImageBase64 = "";
+
+      // Trigger AI logic based on Step
+      if (currentStep === 1) {
+        await processStep1(userText, userImg);
+      } else if (currentStep === 2) {
+        await processStep2(userText, userImg);
+      } else if (currentStep === 3) {
+        await processStep3(userText, userImg);
+      } else if (currentStep === 4) {
+        await processStep4(userText, userImg);
+      }
+    }
+
+    async function callAi(promptText) {
+      addAiMessage("⏳ AI tana aiki a kan wannan matakin...");
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: promptText })
+        });
+        const data = await res.json();
+        return data.reply || "Gafara dai, an samu kuskure.";
+      } catch (err) {
+        return "An samu kuskure wajen haɗawa da Server.";
+      }
+    }
+
+    async function processStep1(text, img) {
+      const prompt = `User is defining Step 1 (App Name & Login/Register UI). User Input: "${text}". Build ONLY pure HTML/TailwindCSS code for screen-login wrapped inside <div id="screen-login">. Also provide a polite chat response in Hausa explaining what was generated. Format response as: CHAT: [Hausa text] | CODE: [HTML code].`;
+      
+      const reply = await callAi(prompt);
+      const parts = reply.split('| CODE:');
+      
+      let chatText = parts[0].replace('CHAT:', '').trim();
+      if (parts[1]) appData.loginCode = cleanCode(parts[1]);
+
+      addAiMessage(chatText);
+      
+      // Sample design reference image sent by AI
+      addAiMessage("Irin tsarin Login ɗin da na tsara muku kenan. Idan ya yi kyau, danna maballin **Wuce Mataki Na Gaba ➡️** a sama.", "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=500&auto=format&fit=crop");
+      
+      document.getElementById('nextStepBtn').classList.remove('hidden');
+    }
+
+    async function processStep2(text, img) {
+      const prompt = `User is defining Step 2 (Dashboard / Home Screen UI). User Input: "${text}". Build ONLY pure HTML/TailwindCSS code for screen-dashboard wrapped inside <div id="screen-dashboard">. Format response as: CHAT: [Hausa text] | CODE: [HTML code].`;
+
+      const reply = await callAi(prompt);
+      const parts = reply.split('| CODE:');
+
+      let chatText = parts[0].replace('CHAT:', '').trim();
+      if (parts[1]) appData.dashboardCode = cleanCode(parts[1]);
+
+      addAiMessage(chatText);
+      addAiMessage("Nayi nasarar tsara fuskarsar Dashboard! Idan ka gamsu, danna maballin **Wuce Mataki Na Gaba ➡️**.", "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500&auto=format&fit=crop");
+      
+      document.getElementById('nextStepBtn').classList.remove('hidden');
+    }
+
+    async function processStep3(text, img) {
+      const prompt = `User is defining Step 3 (Logic & Functionality). User Input: "${text}". Write JS logic to manage buttons, forms, and switching between screen-login and screen-dashboard. Format as: CHAT: [Hausa text] | CODE: [JS code inside <script>].`;
+
+      const reply = await callAi(prompt);
+      const parts = reply.split('| CODE:');
+
+      let chatText = parts[0].replace('CHAT:', '').trim();
+      if (parts[1]) appData.logicCode = cleanCode(parts[1]);
+
+      addAiMessage(chatText);
+      addAiMessage("Madalla! An adana dukkan hanyoyin aiki da maballai. Danna **Wuce Mataki Na Gaba ➡️** don saita API Keys.");
+      
+      document.getElementById('nextStepBtn').classList.remove('hidden');
+    }
+
+    async function processStep4(text, img) {
+      appData.apiKeys = text;
+      addAiMessage("Madalla! Ina haɗe dukkan Lambobin (Module 1, 2, 3 & API Keys) zuwa cikakken App guda ɗaya...");
+
+      // Build Combined HTML
+      appData.fullCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${appData.appName}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans min-h-screen">
+
+  <!-- MODULE 1: LOGIN UI -->
+  ${appData.loginCode}
+
+  <!-- MODULE 2: DASHBOARD UI -->
+  ${appData.dashboardCode}
+
+  <!-- MODULE 3: LOGIC & APIS -->
+  ${appData.logicCode}
+
+</body>
+</html>`;
+
+      const blob = new Blob([appData.fullCode], { type: 'text/html' });
+      const appUrl = URL.createObjectURL(blob);
+
+      const finalOutputHtml = `
+      🎉 **TAYA MURNAR GINA APP ƊINKA!**
+      
+      An kammala haɗa dukkan matakai 4 cikin nasara.
+
+      🔗 **Direct URL Link ɗin App ɗinka:**
+      \`${appUrl}\`
+
+      Za ka iya zaɓar ɗaya daga cikin waɗannan zaɓuɓɓukan:
+      
+      <div class="mt-3 flex flex-col gap-2">
+        <button onclick="downloadAppHtml()" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 px-3 rounded-lg font-bold text-xs">
+          📥 Sauke Cikakken HTML File
+        </button>
+        <a href="https://www.webintoapp.com" target="_blank" class="bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 px-3 rounded-lg font-bold text-xs text-center">
+          📲 Maida Shi Cikakken APK (WebIntoApp)
+        </a>
+      </div>`;
+
+      addAiMessage(finalOutputHtml);
+    }
+
+    function nextStep() {
+      currentStep++;
+      document.getElementById('nextStepBtn').classList.add('hidden');
+
+      if (currentStep === 2) {
+        document.getElementById('stepTitle').innerText = "Mataki 2: Zana Fuskarsar Dashboard";
+        addAiMessage("**MATAKI 2:** Yanzu kuma mu koma kan **Dashboard/Home Screen**. Wadanne abubuwa ne kake so su kasance a ciki? (Za ka iya aiko hoto ko bayani).");
+      } else if (currentStep === 3) {
+        document.getElementById('stepTitle').innerText = "Mataki 3: Ayyukan App & Logic";
+        addAiMessage("**MATAKI 3:** Bayyana min yadda kake son maballan cikin Dashboard din su rika aiki dalla-dalla.");
+      } else if (currentStep === 4) {
+        document.getElementById('stepTitle').innerText = "Mataki 4: API Keys & Fitar da App";
+        addAiMessage("**MATAKI 4 (Na Ƙarshe):** Shin App ɗinka yana buƙatar wani **API KEY** ko haɗin Database? Idan akwai tura min ko ka rubuta 'Babu', sannan danna Send don na fitar da App ɗin!");
+      }
+    }
+
+    function cleanCode(str) {
+      return str.replace(/^```(html|javascript|js)?\s*/i, '').replace(/```$/g, '').trim();
+    }
+
+    function downloadAppHtml() {
+      const blob = new Blob([appData.fullCode], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${appData.appName}.html`;
+      a.click();
+    }
+  </script>
 
 </body>
 </html>
