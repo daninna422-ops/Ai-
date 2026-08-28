@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App Builder - Enterprise Multi-File</title>
+  <title>Center App Builder - Multi-File AI Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -11,7 +11,7 @@
 
   <header class="bg-slate-900 border border-slate-800 p-4 rounded-xl mb-4 flex justify-between items-center">
     <div>
-      <h1 class="text-base font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Center App Builder (Multi-File)</h1>
+      <h1 class="text-base font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Center App Builder</h1>
       <p id="stepLabel" class="text-xs text-amber-400">Mataki 1: Gina Shafin Login (login.html)</p>
     </div>
     <span id="fileCount" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-400">Files: 0/4</span>
@@ -21,15 +21,15 @@
   <div id="chatBox" class="h-96 bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-y-auto space-y-3 text-xs">
     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
       👋 **Sannu! Za mu gina Cikakken App mai Fayiloli Daban-Daban.**<br><br>
-      **Mataki na 1:** Tura min umarni ko **Hoton Tsarin Shafin Login/Register** da kake so na gina maka (`login.html`).
+      **Mataki na 1:** Rubuta umarni ko tura **Hoton Tsarin Shafin Login/Register** da kake so na gina maka (`login.html`).
     </div>
   </div>
 
-  <!-- IMAGE PREVIEW BOX -->
+  <!-- IMAGE PREVIEW AREA -->
   <div id="imgPreviewArea" class="hidden my-2 p-2 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
     <div class="flex items-center gap-2">
       <img id="previewImg" class="w-12 h-12 object-cover rounded">
-      <span class="text-xs text-sky-400">An haɗa hoto don AI ta duba</span>
+      <span class="text-xs text-sky-400">An shirya hoto don AI ta duba</span>
     </div>
     <button onclick="clearImage()" class="text-rose-500 font-bold text-xs px-2">X</button>
   </div>
@@ -40,15 +40,15 @@
       <i class="fa-solid fa-image"></i>
       <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="previewSelectedImage(event)">
     </label>
-    <input type="text" id="userPrompt" placeholder="Rubuta umarni anan..." class="flex-1 bg-slate-900 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none focus:border-sky-500">
+    <input type="text" id="userPrompt" placeholder="Rubuta umarni anan..." class="flex-1 bg-slate-900 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none focus:border-sky-500" onkeydown="if(event.key==='Enter') processCurrentStep()">
     <button onclick="processCurrentStep()" class="bg-sky-500 hover:bg-sky-600 text-slate-950 px-5 py-3 rounded-xl font-bold text-xs">
       Aika
     </button>
   </div>
 
-  <!-- NEXT STEP CONTROLLER -->
+  <!-- NEXT STEP AREA -->
   <div id="nextActionArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center">
-    <span class="text-xs text-emerald-400 font-semibold" id="stepSuccessTxt">An gina fayil ɗin cikin nasara!</span>
+    <span class="text-xs text-emerald-400 font-semibold">An gina wannan fayil ɗin cikin nasara!</span>
     <button onclick="goToNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 rounded-lg font-bold">
       Wuce Mataki Na Gaba ➡️
     </button>
@@ -79,9 +79,28 @@ function previewSelectedImage(e) {
   if (file) {
     const reader = new FileReader();
     reader.onload = function(evt) {
-      currentBase64Image = evt.target.result;
-      document.getElementById('previewImg').src = currentBase64Image;
-      document.getElementById('imgPreviewArea').classList.remove('hidden');
+      const img = new Image();
+      img.src = evt.target.result;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const scaleFactor = MAX_WIDTH / img.width;
+        
+        if (img.width > MAX_WIDTH) {
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleFactor;
+        } else {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        }
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        currentBase64Image = canvas.toDataURL('image/jpeg', 0.7);
+        document.getElementById('previewImg').src = currentBase64Image;
+        document.getElementById('imgPreviewArea').classList.remove('hidden');
+      };
     };
     reader.readAsDataURL(file);
   }
@@ -144,7 +163,7 @@ async function processCurrentStep() {
         appendChat('ai', "✅ **An gina `dashboard.html` da gaske!** Na tsara dukkan sashen gudanarwa.");
       } else if (currentStep === 3) {
         projectFiles["app.js"] = extractedCode;
-        appendChat('ai', "✅ **An gina `app.js`!** An rubuta ayyuka da logiko na gaske.");
+        appendChat('ai', "✅ **An gina `app.js`!** An rubuta ayyuka da logic na gaske.");
       } else if (currentStep === 4) {
         projectFiles["style.css"] = extractedCode;
         appendChat('ai', "✅ **An gina `style.css`!** An gyara zane-zane da kyawun siffa.");
@@ -153,7 +172,7 @@ async function processCurrentStep() {
       document.getElementById('nextActionArea').classList.remove('hidden');
     }
   } catch (err) {
-    appendChat('ai', "❌ An samu kuskure wajen gina fayil ɗin.");
+    appendChat('ai', "❌ An samu kuskure wajen haɗawa da server.");
   }
 }
 
