@@ -3,160 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App AI - Step Builder</title>
+  <title>Center App AI - Template Wizard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
-    iframe { width: 100%; height: 400px; background: #fff; border-radius: 8px; }
+    .card-option { cursor: pointer; transition: all 0.2s; border: 2px solid #334155; }
+    .card-option.selected { border-color: #38bdf8; background-color: #1e293b; }
   </style>
 </head>
 <body class="p-4 md:p-8 max-w-4xl mx-auto">
 
   <header class="flex justify-between items-center mb-6">
-    <h1 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Multi-Step App Builder</h1>
+    <h1 class="text-xl font-bold text-sky-400"><i class="fa-solid fa-wand-magic-sparkles"></i> App Creator Wizard</h1>
     <a href="index.html" class="text-xs bg-slate-800 border border-slate-700 px-3 py-2 rounded text-slate-300">💬 Chat</a>
   </header>
 
-  <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl space-y-4">
-    <div>
-      <label class="block font-bold mb-1 text-sm">Sunan App:</label>
-      <input type="text" id="appName" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white" value="My App">
-    </div>
+  <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl space-y-6">
 
     <div>
-      <label class="block font-bold mb-1 text-sm">Cikakken Bayanin App din da kake so:</label>
-      <textarea id="appPrompt" class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-white h-24" placeholder="Misali: App na harkar kudi da dashboard..."></textarea>
+      <h2 class="text-sm font-bold text-sky-400 mb-3">MATAKI 1: Zaɓi Nau'in App (Category)</h2>
+      <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 text-center" id="categoryGroup">
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Banki/Finance', this)">
+          <i class="fa-solid fa-building-columns text-2xl text-emerald-400 mb-1"></i>
+          <p class="text-xs font-semibold">Banki</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Chat/Social', this)">
+          <i class="fa-solid fa-comments text-2xl text-blue-400 mb-1"></i>
+          <p class="text-xs font-semibold">Chat</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Makaranta/E-learning', this)">
+          <i class="fa-solid fa-graduation-cap text-2xl text-amber-400 mb-1"></i>
+          <p class="text-xs font-semibold">Makaranta</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Kasuwanci/E-commerce', this)">
+          <i class="fa-solid fa-cart-shopping text-2xl text-purple-400 mb-1"></i>
+          <p class="text-xs font-semibold">Kasuwanci</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'AI Tools', this)">
+          <i class="fa-solid fa-robot text-2xl text-rose-400 mb-1"></i>
+          <p class="text-xs font-semibold">AI App</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Game/Wasanni', this)">
+          <i class="fa-solid fa-gamepad text-2xl text-indigo-400 mb-1"></i>
+          <p class="text-xs font-semibold">Game</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Watch Ads & Earn', this)">
+          <i class="fa-solid fa-circle-dollar-to-slot text-2xl text-yellow-400 mb-1"></i>
+          <p class="text-xs font-semibold">Kallon Talle</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('category', 'Aikin Yanar Gizo', this)">
+          <i class="fa-solid fa-laptop-code text-2xl text-teal-400 mb-1"></i>
+          <p class="text-xs font-semibold">Online Work</p>
+        </div>
+      </div>
+      <input type="text" id="customCategory" placeholder="Ko ka rubuta naka anan idan baka ga irin wanda kake so ba..." class="w-full mt-3 bg-slate-900 border border-slate-700 p-2.5 rounded text-xs text-white">
     </div>
 
-    <!-- Stepper Progress Controls -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-      <button id="step1Btn" onclick="buildStep(1)" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded text-sm flex items-center justify-center gap-2">
-        <span>1️⃣ Mataki 1: Gina Fuska (UI)</span>
-      </button>
-      
-      <button id="step2Btn" onclick="buildStep(2)" disabled class="bg-slate-700 text-slate-400 font-bold py-3 rounded text-sm cursor-not-allowed flex items-center justify-center gap-2">
-        <span>2️⃣ Mataki 2: Cika Ayyuka (Logic)</span>
-      </button>
+    <div>
+      <h2 class="text-sm font-bold text-sky-400 mb-3">MATAKI 2: Salo da Tsarin Launi (Theme Style)</h2>
+      <div class="grid grid-cols-3 gap-3 text-center" id="themeGroup">
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('theme', 'Modern Dark Theme', this)">
+          <p class="text-xs font-semibold text-slate-200">🌙 Dark Modern</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('theme', 'Clean Light Theme', this)">
+          <p class="text-xs font-semibold text-slate-200">☀️ Light Clean</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('theme', 'Colorful Gradient Theme', this)">
+          <p class="text-xs font-semibold text-slate-200">🎨 Colorful</p>
+        </div>
+      </div>
     </div>
 
-    <div id="statusBox" class="hidden text-xs text-amber-400 font-semibold text-center p-2 bg-slate-900 rounded"></div>
+    <div>
+      <h2 class="text-sm font-bold text-sky-400 mb-3">MATAKI 3: Zaɓar Dashboard / Home Layout</h2>
+      <div class="grid grid-cols-2 gap-3 text-center" id="layoutGroup">
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('layout', 'Grid Cards with Bottom Navigation', this)">
+          <p class="text-xs font-semibold">📱 Grid Cards + Bottom Nav</p>
+        </div>
+        <div class="card-option p-3 rounded-lg bg-slate-900" onclick="selectOption('layout', 'Sidebar Menu with Analytics Dashboard', this)">
+          <p class="text-xs font-semibold">📊 Sidebar + Dashboard</p>
+        </div>
+      </div>
+    </div>
 
-    <!-- Output Section -->
+    <div>
+      <h2 class="text-sm font-bold text-sky-400 mb-2">MATAKI 4: Bayanin Sunan App da Ayyukansa</h2>
+      <input type="text" id="appName" placeholder="Sunan App ɗinka (Misali: PayFast Mobile)" class="w-full mb-3 bg-slate-900 border border-slate-700 p-3 rounded text-sm text-white">
+      <textarea id="appDetails" placeholder="Rubuta takaitaccen aikin da kake son App din ya rika yi..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded text-sm text-white h-20"></textarea>
+    </div>
+
+    <button id="buildBtn" onclick="generateWizardApp()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 rounded-lg text-sm flex items-center justify-center gap-2">
+      🚀 Gina Cikakken App Yanzu
+    </button>
+
     <div id="outputArea" class="hidden flex-col gap-4 pt-4 border-t border-slate-700">
-      <div class="text-sky-400 font-bold text-sm">📱 Live Preview:</div>
-      <iframe id="appFrame"></iframe>
+      <div class="text-sky-400 font-bold text-sm">📱 Gwada App Din Ka (Live Preview):</div>
+      <iframe id="appFrame" class="w-full h-96 bg-white rounded-lg border border-slate-700"></iframe>
+
+      <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-2">
+        <label class="text-xs text-amber-400 font-bold block">🔗 URL Link ɗin App ɗinka (Zaka iya sanyawa a WebIntoApp):</label>
+        <div class="flex gap-2">
+          <input type="text" id="urlOutput" readonly class="w-full bg-slate-800 border border-slate-700 p-2 rounded text-xs text-slate-300">
+          <button onclick="copyUrl()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 rounded text-white font-bold">Copy</button>
+        </div>
+      </div>
 
       <div class="flex flex-col sm:flex-row gap-3">
-        <button onclick="downloadCode()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded text-sm text-center">
-          📥 Sauke Cikakken HTML
+        <button onclick="downloadHtml()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded text-sm text-center">
+          📥 Sauke HTML File
         </button>
         <a href="https://www.webintoapp.com" target="_blank" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded text-sm text-center">
           📲 Maida Shi APK (WebIntoApp)
         </a>
       </div>
     </div>
+
   </div>
 
 <script>
-let appState = {
-  name: '',
-  prompt: '',
-  uiCode: '',
-  finalCode: ''
+let wizardData = {
+  category: '',
+  theme: '',
+  layout: ''
 };
 
-async function buildStep(step) {
-  const name = document.getElementById('appName').value.trim() || "My App";
-  const prompt = document.getElementById('appPrompt').value.trim();
-  const statusBox = document.getElementById('statusBox');
-  const step1Btn = document.getElementById('step1Btn');
-  const step2Btn = document.getElementById('step2Btn');
+let generatedHtml = "";
+
+function selectOption(type, val, element) {
+  wizardData[type] = val;
+  const parent = element.parentElement;
+  Array.from(parent.children).forEach(child => child.classList.remove('selected'));
+  element.classList.add('selected');
+}
+
+async function generateWizardApp() {
+  const customCat = document.getElementById('customCategory').value.trim();
+  const category = customCat || wizardData.category || 'General App';
+  const theme = wizardData.theme || 'Modern Dark';
+  const layout = wizardData.layout || 'Grid Cards';
+  const appName = document.getElementById('appName').value.trim() || 'My Center App';
+  const details = document.getElementById('appDetails').value.trim();
+
+  const buildBtn = document.getElementById('buildBtn');
   const outputArea = document.getElementById('outputArea');
   const frame = document.getElementById('appFrame');
+  const urlOutput = document.getElementById('urlOutput');
 
-  if (!prompt) {
-    alert("Da alama baka rubuta bayanin App din ba!");
-    return;
-  }
+  buildBtn.disabled = true;
+  buildBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> AI Yana sarrafa App din ka...`;
+  outputArea.classList.add('hidden');
 
-  appState.name = name;
-  appState.prompt = prompt;
+  const promptMsg = `Create a fully-functional, beautiful, single-file HTML web application.
+App Name: "${appName}"
+Category: "${category}"
+Theme Style: "${theme}"
+Layout Design: "${layout}"
+Specific Features: "${details}"
 
-  statusBox.classList.remove('hidden');
-  
-  if (step === 1) {
-    statusBox.innerText = "⏳ Mataki 1: AI Yana zana fuskatar App (UI & Styles)...";
-    step1Btn.disabled = true;
+Use Tailwind CSS CDN and FontAwesome CDN icons. Include complete interactive JavaScript functionality (e.g. data handling, working buttons, dynamic screens). Return ONLY pure raw HTML code without markdown codeblocks like \`\`\`html.`;
 
-    const sysMsg = `You are an expert web UI designer. Build only the HTML and Tailwind CSS UI skeleton for this app: "${prompt}". Use Tailwind CDN in head. DO NOT include markdown tags like \`\`\`html. Return pure raw HTML.`;
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: promptMsg })
+    });
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: sysMsg })
-      });
-      const data = await res.json();
-      
-      if (data.reply) {
-        appState.uiCode = cleanCode(data.reply);
-        frame.srcdoc = appState.uiCode;
-        outputArea.classList.remove('hidden');
-        outputArea.classList.add('flex');
-        
-        statusBox.innerText = "✅ An kammala Mataki 1! Yanzu danna Mataki 2 domin sa aiki a ciki.";
-        step2Btn.disabled = false;
-        step2Btn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
-        step2Btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'text-white');
-      }
-    } catch (e) {
-      statusBox.innerText = "❌ An samu kuskure wajen gina Mataki 1.";
-    } finally {
-      step1Btn.disabled = false;
+    const data = await res.json();
+
+    if (res.ok && data.reply) {
+      generatedHtml = data.reply.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
+      frame.srcdoc = generatedHtml;
+
+      // Samar da URL Link na temporary Data-URL don haɗawa a WebIntoApp
+      const blob = new Blob([generatedHtml], { type: 'text/html' });
+      const tempUrl = URL.createObjectURL(blob);
+      urlOutput.value = tempUrl;
+
+      outputArea.classList.remove('hidden');
+      outputArea.classList.add('flex');
+    } else {
+      alert("❌ " + (data.error || "An samu kuskure."));
     }
-  } 
-  
-  else if (step === 2) {
-    statusBox.innerText = "⏳ Mataki 2: AI Yana haɗa JavaScript & Logics na gaske...";
-    step2Btn.disabled = true;
-
-    const sysMsg = `Take this HTML layout:\n${appState.uiCode}\n\nAdd complete functional JavaScript logic, event handlers, interactive elements, and data storage for the request: "${prompt}". DO NOT return markdown like \`\`\`html. Return ONLY the complete executable single HTML file code.`;
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: sysMsg })
-      });
-      const data = await res.json();
-
-      if (data.reply) {
-        appState.finalCode = cleanCode(data.reply);
-        frame.srcdoc = appState.finalCode;
-        statusBox.innerText = "🎉 Cikakken App ya kammala 100%! Ka iya saukewa ko maida shi APK.";
-      }
-    } catch (e) {
-      statusBox.innerText = "❌ An samu kuskure wajen haɗa Mataki 2.";
-    } finally {
-      step2Btn.disabled = false;
-    }
+  } catch (err) {
+    alert("❌ Kuskure wajen haɗawa da Server.");
+  } finally {
+    buildBtn.disabled = false;
+    buildBtn.innerHTML = `🚀 Gina Cikakken App Yanzu`;
   }
 }
 
-function cleanCode(str) {
-  return str.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```$/g, '').trim();
-}
-
-function downloadCode() {
-  const content = appState.finalCode || appState.uiCode;
-  if (!content) return;
-  const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+function downloadHtml() {
+  if (!generatedHtml) return;
+  const name = document.getElementById('appName').value.trim() || 'My_App';
+  const blob = new Blob([generatedHtml], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${appState.name.replace(/\s+/g, '_')}.html`;
+  a.download = `${name.replace(/\s+/g, '_')}.html`;
   a.click();
 }
+
+function copyUrl() {
+  const urlInput = document.getElementById('urlOutput');
+  urlInput.select();
+  document.execCommand('copy');
+  alert("📋 An kwashe URL Link ɗin App ɗinka! Yanzu za ka iya manna shi a WebIntoApp.");
+}
 </script>
+
 </body>
 </html>
