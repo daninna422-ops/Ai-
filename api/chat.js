@@ -1,92 +1,69 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Daidaita nauyin sako don kare sabar daga ambaliyar bayanai (Vercel payload limits)
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '4mb',
     },
   },
 };
 
 export default async function handler(req, res) {
-  // Karɓar Sharuɗɗan Tsaro da Haɗin gizo (CORS Headers)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(200).json({ reply: "❌ Kuskure: Ana karɓar buƙatar POST kawai." });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(200).json({ reply: "❌ POST requests kawai aka amince." });
 
   try {
     const { message, image, step } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(200).json({ 
-        reply: "❌ GEMINI_API_KEY ba ta samamu ba. Tabbatar ka saka ta a Vercel Settings -> Environment Variables." 
-      });
+      return res.status(200).json({ reply: "❌ GEMINI_API_KEY baha sa a Vercel Environment Variables ba." });
     }
 
-    // Fara haɗawa da Google Gemini Engine
     const genAI = new GoogleGenerativeAI(apiKey);
+    
+    // Amfani da sabon model mai sauri wajen gina code da Vision
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.2
+        maxOutputTokens: 3000,
+        temperature: 0.1
       }
     });
 
-    // Gina System Prompt dangane da matakin ginin app (Step 1 - Step 4)
-    let stepInstructions = "";
-    if (step === 1) {
-      stepInstructions = "SYSTEM INSTRUCTION: You are an expert front-end developer. Generate ONLY valid raw code for `login.html`. Build a complete, functional UI with user authentication screens, forms, input validation, clean responsive design, and CSS using Tailwind CDN. Do not return markdown chatter outside the code.";
-    } else if (step === 2) {
-      stepInstructions = "SYSTEM INSTRUCTION: You are an expert UI/UX developer. Generate ONLY valid raw code for `dashboard.html`. Build a full high-end web dashboard screen with sidebar, cards, tables, charts shell, and dynamic header based on the input image or text. Do not return markdown chatter outside code.";
-    } else if (step === 3) {
-      stepInstructions = "SYSTEM INSTRUCTION: You are a JavaScript engineer. Generate ONLY valid raw JavaScript code for `app.js`. Include dynamic functional logic, DOM manipulation, authentication state handling, and interactive features for the layout previously built.";
-    } else if (step === 4) {
-      stepInstructions = "SYSTEM INSTRUCTION: You are a CSS designer. Generate ONLY clean pure CSS rules for `style.css` to polish animations, custom scrollbars, dark-mode elements, and typography.";
-    }
+    let promptText = "Generate clean code only. No markdown text.";
+    if (step === 1) promptText = "Build responsive Tailwind login HTML screen based on this reference.";
+    if (step === 2) promptText = "Build responsive Tailwind dashboard HTML layout based on this reference.";
+    if (step === 3) promptText = "Build vanilla JS app.js logic code for this web application.";
+    if (step === 4) promptText = "Build custom CSS styles in style.css.";
 
-    let contents = [stepInstructions, message || "Gina lambobi masu inganci a aikace dangane da wannan samfurin."];
+    let contents = [promptText, message || ""];
 
-    // Sarrafa hoto idan an aiko shi ta hanyan Base64
+    // Karbar Hoto
     if (image && typeof image === 'string' && image.includes('data:image')) {
-      try {
-        const mimeType = image.split(';')[0].split(':')[1] || 'image/jpeg';
-        const base64Data = image.split(',')[1];
+      const mimeType = image.split(';')[0].split(':')[1] || 'image/jpeg';
+      const base64Data = image.split(',')[1];
 
-        if (base64Data) {
-          contents.push({
-            inlineData: {
-              mimeType: mimeType,
-              data: base64Data
-            }
-          });
-        }
-      } catch (e) {
-        console.error("Kuskuren sarrafa Tsarin Hoto:", e);
+      if (base64Data) {
+        contents.push({
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Data
+          }
+        });
       }
     }
 
-    // Aikawa da nema zuwa ga Gemini Engine
     const result = await model.generateContent(contents);
     const response = await result.response;
-    const textResult = response.text();
-
-    return res.status(200).json({ reply: textResult });
+    return res.status(200).json({ reply: response.text() });
 
   } catch (error) {
-    console.error("Critical Gemini Server Error:", error);
-    return res.status(200).json({ 
-      reply: `❌ Kuskure daga Server: ${error.message || 'Hana haɗuwa da tsarin sabar'}` 
-    });
+    console.error("Gemini Error:", error);
+    return res.status(200).json({ reply: `❌ Kuskure: ${error.message}` });
   }
 }
