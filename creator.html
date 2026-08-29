@@ -3,60 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App Builder - Fast Vision Edition</title>
+  <title>Center App Builder - Enterprise Multi-File System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 max-w-4xl mx-auto">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-2 md:p-6 max-w-5xl mx-auto flex flex-col justify-between">
 
-  <header class="bg-slate-900 border border-slate-800 p-4 rounded-xl mb-4 flex justify-between items-center">
-    <div>
-      <h1 class="text-base font-bold text-sky-400"><i class="fa-solid fa-cubes"></i> Center App Builder</h1>
-      <p id="stepLabel" class="text-xs text-amber-400">Mataki 1: Gina Shafin Login (login.html)</p>
+  <!-- HEADER NAVIGATION -->
+  <header class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl flex flex-wrap justify-between items-center gap-4">
+    <div class="flex items-center gap-3">
+      <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
+        <i class="fa-solid fa-layer-group text-xl"></i>
+      </div>
+      <div>
+        <h1 class="text-sm md:text-base font-bold text-white tracking-wide">Center App Builder AI</h1>
+        <p id="stepLabel" class="text-xs text-amber-400 font-medium">Mataki 1 daga 4: Shafin Login (`login.html`)</p>
+      </div>
     </div>
-    <span id="fileCount" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-400">Files: 0/4</span>
+    <div class="flex items-center gap-3">
+      <span id="fileBadge" class="text-xs font-mono bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-300">
+        Fayiloli: 0 / 4
+      </span>
+    </div>
   </header>
 
-  <div id="chatBox" class="h-96 bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-y-auto space-y-3 text-xs">
-    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-      👋 **Sannu! Za mu gina Cikakken App mai Fayiloli Daban-Daban.**<br><br>
-      **Mataki na 1:** Rubuta umarni ko tura **Hoton Tsarin Shafin Login/Register** da kake so na gina maka (`login.html`).
+  <!-- MAIN CHAT INTERFACE AREA -->
+  <main class="my-4 flex-1">
+    <div id="chatBox" class="h-[430px] bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-y-auto space-y-4 text-xs custom-scrollbar shadow-inner">
+      <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl leading-relaxed text-slate-200">
+        👋 **Sannu da zuwa Center App Builder Engine!**<br><br>
+        Zan gina maka cikakken software mai rarrabattun fayiloli na gaske (HTML, JS, CSS).<br><br>
+        📌 **MATAKI NA 1:** Loda Hoton samfur ko rubuta umarni na yadda kake so tsarin shafin **Login da Register** (`login.html`) ya kasance.
+      </div>
     </div>
-  </div>
 
-  <div id="imgPreviewArea" class="hidden my-2 p-2 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <img id="previewImg" class="w-12 h-12 object-cover rounded">
-      <span class="text-xs text-sky-400">An rage nauyin hoto (Optimized)</span>
+    <!-- PREVIEW AREA FOR IMAGE BEFORE UPLOAD -->
+    <div id="imgPreviewArea" class="hidden mt-3 p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img id="previewImg" class="w-10 h-10 object-cover rounded-lg border border-slate-700">
+        <div>
+          <p class="text-xs font-semibold text-sky-400">An shirya hoto don sarrafawa</p>
+          <p class="text-[10px] text-slate-400">An rage nauyinsa (Compressed for safety)</p>
+        </div>
+      </div>
+      <button onclick="clearImage()" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 p-2 rounded-lg">
+        <i class="fa-solid fa-xmark"></i> Cire Hoto
+      </button>
     </div>
-    <button onclick="clearImage()" class="text-rose-500 font-bold text-xs px-2">X</button>
-  </div>
+  </main>
 
-  <div class="mt-3 flex gap-2">
-    <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl flex items-center justify-center">
-      <i class="fa-solid fa-image"></i>
-      <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="previewSelectedImage(event)">
-    </label>
-    <input type="text" id="userPrompt" placeholder="Rubuta umarni anan..." class="flex-1 bg-slate-900 border border-slate-800 p-3 rounded-xl text-xs text-white focus:outline-none focus:border-sky-500" onkeydown="if(event.key==='Enter') processCurrentStep()">
-    <button onclick="processCurrentStep()" class="bg-sky-500 hover:bg-sky-600 text-slate-950 px-5 py-3 rounded-xl font-bold text-xs">
-      Aika
-    </button>
-  </div>
+  <!-- FOOTER & INPUT CONTROLLERS -->
+  <footer class="space-y-3">
+    <div class="flex gap-2 items-center bg-slate-900 border border-slate-800 p-2 rounded-2xl">
+      <label title="Loda Hoto" class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-xl flex items-center justify-center transition">
+        <i class="fa-solid fa-image text-sm"></i>
+        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelection(event)">
+      </label>
 
-  <div id="nextActionArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center">
-    <span class="text-xs text-emerald-400 font-semibold">An gina wannan fayil ɗin cikin nasara!</span>
-    <button onclick="goToNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 rounded-lg font-bold">
-      Wuce Mataki Na Gaba ➡️
-    </button>
-  </div>
+      <input type="text" id="userPrompt" placeholder="Rubuta bayanin daki-daki anan ko aiko hoto..." 
+             class="flex-1 bg-transparent px-3 text-xs text-white placeholder-slate-500 focus:outline-none"
+             onkeydown="if(event.key==='Enter') processCurrentStep()">
 
-  <div id="finalDownloadArea" class="hidden mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-3">
-    <p class="text-xs text-sky-400 font-bold">🎉 AN KAMMALA GINA DUKKAN FAYILOLIN APP ƊIN!</p>
-    <div id="fileList" class="text-xs space-y-1 text-slate-300 font-mono"></div>
-    <button onclick="downloadAllFiles()" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-bold text-xs">
-      📥 Sauke Dukkan Fayilolin Project (HTML/CSS/JS)
-    </button>
-  </div>
+      <button onclick="processCurrentStep()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-5 py-3 rounded-xl text-xs transition flex items-center gap-2">
+        <span>Aika</span>
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <!-- NEXT STEP ACTION BOX -->
+    <div id="nextActionArea" class="hidden p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between">
+      <div class="flex items-center gap-2 text-emerald-400 font-semibold text-xs">
+        <i class="fa-solid fa-circle-check text-sm"></i>
+        <span>An haɗa wannan fayil ɗin cikin nasara!</span>
+      </div>
+      <button onclick="goToNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2">
+        <span>Wuce Mataki Na Gaba</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- FINAL DOWNLOAD MULTI-FILES BOX -->
+    <div id="finalDownloadArea" class="hidden p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+      <div class="text-xs text-sky-400 font-bold flex items-center gap-2">
+        <i class="fa-solid fa-trophy"></i>
+        <span>AN KAMMALA GINA DUKKAN FAYILOLIN PROJECT!</span>
+      </div>
+      <div id="fileList" class="text-xs space-y-1 text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
+      <button onclick="downloadAllFiles()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Sauke Dukkan Fayiloli (ZIP/Separate Files)</span>
+      </button>
+    </div>
+  </footer>
 
 <script>
 let currentStep = 1;
@@ -69,8 +112,8 @@ let projectFiles = {
   "style.css": ""
 };
 
-// COMPRESS IMAGE TO FIT VERCEL PAYLOAD LIMIT (< 500KB)
-function previewSelectedImage(e) {
+// SARRAFA HOTON ZUWA MAI NAUYI KALILAN DUMARIN VERCEL (IMAGE COMPRESSION)
+function handleImageSelection(e) {
   const file = e.target.files[0];
   if (file) {
     const reader = new FileReader();
@@ -79,7 +122,7 @@ function previewSelectedImage(e) {
       img.src = evt.target.result;
       img.onload = function() {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 500; // Small width for fast response
+        const MAX_WIDTH = 600; 
         const scaleFactor = MAX_WIDTH / img.width;
         
         if (img.width > MAX_WIDTH) {
@@ -93,8 +136,7 @@ function previewSelectedImage(e) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // Low quality JPEG compression for extreme speed
-        currentBase64Image = canvas.toDataURL('image/jpeg', 0.5);
+        currentBase64Image = canvas.toDataURL('image/jpeg', 0.6);
         document.getElementById('previewImg').src = currentBase64Image;
         document.getElementById('imgPreviewArea').classList.remove('hidden');
       };
@@ -113,7 +155,9 @@ function appendChat(role, text) {
   const box = document.getElementById('chatBox');
   const isUser = role === 'user';
   const div = document.createElement('div');
-  div.className = isUser ? "bg-sky-900/40 border border-sky-800 p-3 rounded-lg text-right" : "bg-slate-800 p-3 rounded-lg border border-slate-700";
+  div.className = isUser 
+    ? "bg-sky-950/60 border border-sky-800/60 p-3 rounded-xl text-right max-w-[85%] ml-auto text-sky-100" 
+    : "bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl max-w-[90%] mr-auto text-slate-200";
   div.innerHTML = text.replace(/\n/g, '<br>');
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
@@ -124,17 +168,17 @@ async function processCurrentStep() {
   const promptText = input.value.trim();
 
   if (!promptText && !currentBase64Image) {
-    alert("Da alama baka saka rubutu ko hoto ba!");
+    alert("Shigar da sako ko ka zabi hoto kafin tura umarni!");
     return;
   }
 
-  appendChat('user', promptText + (currentBase64Image ? "<br>📷 [An haɗa hoto]" : ""));
+  appendChat('user', (promptText || "Gina lambobi bisa hoton nan") + (currentBase64Image ? "<br>📷 <i>[An aiko tare da hoto]</i>" : ""));
   input.value = "";
 
-  appendChat('ai', "⏳ AI tana aiki akan gina wannan fayil ɗin dangane da umarnin ka...");
+  appendChat('ai', "⏳ Engine tana aiwatar da gina fayil ɗin, dakata kadan...");
 
   let payload = {
-    message: promptText || "Generate code based on this layout image",
+    message: promptText,
     image: currentBase64Image || null,
     step: currentStep
   };
@@ -159,24 +203,22 @@ async function processCurrentStep() {
 
       if (currentStep === 1) {
         projectFiles["login.html"] = extractedCode;
-        appendChat('ai', "✅ **An gina `login.html` da gaske!** Na kiyaye dukkan siffar da ka roƙa.");
+        appendChat('ai', "✅ **An gina `login.html` da kyakkyawan tsarin shiga!**");
       } else if (currentStep === 2) {
         projectFiles["dashboard.html"] = extractedCode;
-        appendChat('ai', "✅ **An gina `dashboard.html` da gaske!** Na tsara dukkan sashen gudanarwa.");
+        appendChat('ai', "✅ **An gina `dashboard.html` da dukkan sassan ikon sarrafawa!**");
       } else if (currentStep === 3) {
         projectFiles["app.js"] = extractedCode;
-        appendChat('ai', "✅ **An gina `app.js`!** An rubuta ayyuka da logic na gaske.");
+        appendChat('ai', "✅ **An gina `app.js` da cikakkun ayyukan maballai da logic!**");
       } else if (currentStep === 4) {
         projectFiles["style.css"] = extractedCode;
-        appendChat('ai', "✅ **An gina `style.css`!** An gyara zane-zane da kyawun siffa.");
+        appendChat('ai', "✅ **An gina `style.css` da gyaran kwalliya na karshe!**");
       }
 
       document.getElementById('nextActionArea').classList.remove('hidden');
-    } else {
-      appendChat('ai', "❌ Backend bai dawo da sakamako ba: " + JSON.stringify(data));
     }
   } catch (err) {
-    appendChat('ai', "❌ Error: " + err.message);
+    appendChat('ai', "❌ Matsalar Sadarwa: Network timeout ko nauyin hoto ya yi yawa.");
   }
 }
 
@@ -185,19 +227,19 @@ function goToNextStep() {
   currentStep++;
 
   if (currentStep === 2) {
-    document.getElementById('stepLabel').innerText = "Mataki 2: Gina Shafin Dashboard (dashboard.html)";
-    document.getElementById('fileCount').innerText = "Files: 1/4";
-    appendChat('ai', "**MATAKI 2:** Tura min hoto ko rubuta umarni na yadda kake son shafin **Dashboard/Home Screen** (`dashboard.html`) ya kasance.");
+    document.getElementById('stepLabel').innerText = "Mataki 2 daga 4: Shafin Dashboard (`dashboard.html`)";
+    document.getElementById('fileBadge').innerText = "Fayiloli: 1 / 4";
+    appendChat('ai', "**MATAKI 2:** Aiko hoto ko ka rubuta bayanin yadda kake son shafin **Dashboard/Home Screen** (`dashboard.html`) ya kasance.");
   } else if (currentStep === 3) {
-    document.getElementById('stepLabel').innerText = "Mataki 3: Rubuta JavaScript Logic (app.js)";
-    document.getElementById('fileCount').innerText = "Files: 2/4";
-    appendChat('ai', "**MATAKI 3:** Bayyana dukkan ayyukan da maballan cikakken app din za su yi. Zan rubuta fayil ɗin `app.js` na daban.");
+    document.getElementById('stepLabel').innerText = "Mataki 3 daga 4: Tsarin Logic (`app.js`)";
+    document.getElementById('fileBadge').innerText = "Fayiloli: 2 / 4";
+    appendChat('ai', "**MATAKI 3:** Bayyana yadda kake son maballan cikin app din su rika aiki. Zan samar da fayil din `app.js` na daban.");
   } else if (currentStep === 4) {
-    document.getElementById('stepLabel').innerText = "Mataki 4: Tsarin Styling (style.css) & Gamawa";
-    document.getElementById('fileCount').innerText = "Files: 3/4";
-    appendChat('ai', "**MATAKI 4:** Rubuta launuka ko siffar gyara da kake so gaba ɗaya. Zan fitar da `style.css` sannan in baka dukkan fayilolin.");
+    document.getElementById('stepLabel').innerText = "Mataki 4 daga 4: Kwalliya & CSS (`style.css`)";
+    document.getElementById('fileBadge').innerText = "Fayiloli: 3 / 4";
+    appendChat('ai', "**MATAKI 4 (Na karshe):** Rubuta launuka ko salon kwalliya da kake so gaba daya. Zan fitar da `style.css` sannan ka sauke dukkan fayilolin.");
   } else if (currentStep > 4) {
-    document.getElementById('fileCount').innerText = "Files: 4/4";
+    document.getElementById('fileBadge').innerText = "Fayiloli: 4 / 4";
     showFinalDownloads();
   }
 }
@@ -206,10 +248,10 @@ function showFinalDownloads() {
   const container = document.getElementById('finalDownloadArea');
   const list = document.getElementById('fileList');
   list.innerHTML = `
-    📄 login.html (${projectFiles["login.html"].length} bytes)<br>
-    📄 dashboard.html (${projectFiles["dashboard.html"].length} bytes)<br>
-    📄 app.js (${projectFiles["app.js"].length} bytes)<br>
-    📄 style.css (${projectFiles["style.css"].length} bytes)
+    📁 login.html (${projectFiles["login.html"].length} characters)<br>
+    📁 dashboard.html (${projectFiles["dashboard.html"].length} characters)<br>
+    📁 app.js (${projectFiles["app.js"].length} characters)<br>
+    📁 style.css (${projectFiles["style.css"].length} characters)
   `;
   container.classList.remove('hidden');
 }
@@ -232,4 +274,4 @@ function cleanCode(str) {
 </script>
 
 </body>
-</html>
+  </html>
