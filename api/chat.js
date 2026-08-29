@@ -1,43 +1,56 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb', // Bada damar karbar hotuna
+    },
+  },
+};
+
 export default async function handler(req, res) {
-  // Bada dama ga shiga ta ko ina (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
   try {
-    const { message } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: 'Saƙo yana buƙata' });
+    const { message, image } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ reply: "❌ Kuskure: GEMINI_API_KEY baha sa a Vercel Environment Variables ba." });
     }
 
-    // Kira izinin AI (Za ki iya saka API Key dinki na Gemini a nan ko a Vercel)
-    const apiKey = process.env.GEMINI_API_KEY || "SURA_YOUR_API_KEY_HERE";
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: message }] }]
-      })
-    });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const data = await response.json();
-    
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
-      const reply = data.candidates[0].content.parts[0].text;
-      return res.status(200).json({ reply: reply, html: "<div>App Generated Successfully</div>" });
-    } else {
-      return res.status(500).json({ error: 'AI bai samar da amsa ba. Tabbatar da API Key.' });
+    let promptContents = [];
+
+    if (message) promptContents.push(message);
+
+    if (image) {
+      const base64Data = image.split(',')[1] || image;
+      const mimeType = image.split(';')[0].split(':')[1] || 'image/jpeg';
+
+      promptContents.push({
+        inlineData: {
+          mimeType: mimeType,
+          data: base64Data
+        }
+      });
     }
+
+    const result = await model.generateContent(promptContents);
+    const response = await result.response;
+    const text = response.text();
+
+    return res.status(200).json({ reply: text });
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error("Vercel Backend Error:", error);
+    return res.status(200).json({ reply: `❌ Kuskure daga Server/Gemini: ${error.message}` });
   }
+}
