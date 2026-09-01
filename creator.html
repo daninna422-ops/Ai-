@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center App Builder - Fast Vision Edition</title>
+  <title>Center App Builder - Full Stack Supabase Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -21,7 +21,7 @@
         <i class="fa-solid fa-layer-group text-xl"></i>
       </div>
       <div>
-        <h1 class="text-sm md:text-base font-bold text-white tracking-wide">Center App Builder AI</h1>
+        <h1 class="text-sm md:text-base font-bold text-white tracking-wide">Center App Builder AI (Full-Stack)</h1>
         <p id="stepLabel" class="text-xs text-amber-400 font-medium">Mataki 1 daga 4: Shafin Login (`login.html`)</p>
       </div>
     </div>
@@ -32,12 +32,27 @@
     </div>
   </header>
 
+  <!-- SUPABASE CONFIGURATION BOX (FOR REAL BACKEND) -->
+  <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl my-3 space-y-2">
+    <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+      <i class="fa-solid fa-database"></i>
+      <span>Haɗa Backend Na Gaske (Supabase Settings - Zabi ne):</span>
+    </div>
+    <div class="flex flex-col md:flex-row gap-2">
+      <input type="text" id="sbUrl" placeholder="Supabase Project URL (e.g. https://xyz.supabase.co)" class="bg-slate-950 text-xs p-2.5 rounded-xl border border-slate-800 flex-1 text-white focus:outline-none focus:border-emerald-500">
+      <input type="text" id="sbKey" placeholder="Supabase Anon API Key" class="bg-slate-950 text-xs p-2.5 rounded-xl border border-slate-800 flex-1 text-white focus:outline-none focus:border-emerald-500">
+      <button onclick="saveSupabaseKeys()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition">
+        Adana Keys
+      </button>
+    </div>
+  </div>
+
   <!-- MAIN CHAT INTERFACE AREA -->
-  <main class="my-4 flex-1">
-    <div id="chatBox" class="h-[430px] bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-y-auto space-y-4 text-xs custom-scrollbar shadow-inner">
+  <main class="my-2 flex-1">
+    <div id="chatBox" class="h-[380px] bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-y-auto space-y-4 text-xs custom-scrollbar shadow-inner">
       <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl leading-relaxed text-slate-200">
-        👋 **Sannu da zuwa Center App Builder Engine!**<br><br>
-        Zan gina maka cikakken software mai rarrabattun fayiloli na gaske (HTML, JS, CSS).<br><br>
+        👋 **Sannu da zuwa Center App Builder Engine (Full-Stack Version)!**<br><br>
+        Muna gina manhajar na gaske mai haɗi da uwar garke (Database) don ajiye bayanai na gaske.<br><br>
         📌 **MATAKI NA 1:** Loda Hoton samfur ko rubuta umarni na yadda kake so tsarin shafin **Login da Register** (`login.html`) ya kasance.
       </div>
     </div>
@@ -47,8 +62,8 @@
       <div class="flex items-center gap-3">
         <img id="previewImg" class="w-10 h-10 object-cover rounded-lg border border-slate-700">
         <div>
-          <p class="text-xs font-semibold text-sky-400">An rage girman hoto (350px)</p>
-          <p class="text-[10px] text-slate-400">An compress dinsa don saurin Vercel</p>
+          <p class="text-xs font-semibold text-sky-400">An rage girman hoto (250px)</p>
+          <p class="text-[10px] text-slate-400">A shirye yake don tura wa AI</p>
         </div>
       </div>
       <button onclick="clearImage()" class="text-rose-400 hover:text-rose-300 font-bold text-xs bg-rose-500/10 p-2 rounded-lg">
@@ -93,7 +108,7 @@
         <i class="fa-solid fa-trophy"></i>
         <span>AN KAMMALA GINA DUKKAN FAYILOLIN PROJECT!</span>
       </div>
-      <div id="fileList" class="text-xs space-y-1 text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
+      <div id="fileList" class="text-xs space-y-2 text-slate-300 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
       <button onclick="downloadAllFiles()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-download"></i>
         <span>Sauke Dukkan Fayiloli (HTML/CSS/JS)</span>
@@ -101,9 +116,12 @@
     </div>
   </footer>
 
+<!-- JAVASCRIPT LOGIC SECTION (WANNAN SHINE WURIN) -->
 <script>
 let currentStep = 1;
 let currentBase64Image = "";
+let supabaseUrl = "";
+let supabaseKey = "";
 
 let projectFiles = {
   "login.html": "",
@@ -112,7 +130,16 @@ let projectFiles = {
   "style.css": ""
 };
 
-// ANAN NAKE SAKA FUNCTION DIN HANDLEIMAGESELECTION
+function saveSupabaseKeys() {
+  supabaseUrl = document.getElementById('sbUrl').value.trim();
+  supabaseKey = document.getElementById('sbKey').value.trim();
+  if(supabaseUrl && supabaseKey) {
+    alert("✅ An adana Supabase API Keys! AI za ta gina cikakken backend na gaske.");
+  } else {
+    alert("⚠️ Da fatan ka shigar da URL da Anon Key na Supabase don gina app na gaske.");
+  }
+}
+
 function handleImageSelection(e) {
   const file = e.target.files[0];
   if (file) {
@@ -122,8 +149,7 @@ function handleImageSelection(e) {
       img.src = evt.target.result;
       img.onload = function() {
         const canvas = document.createElement('canvas');
-        // Maida girman hoto ya zama karami sosai (350px) don saurin Vercel
-        const MAX_WIDTH = 350; 
+        const MAX_WIDTH = 250; 
         const scaleFactor = MAX_WIDTH / img.width;
         
         canvas.width = MAX_WIDTH;
@@ -132,8 +158,7 @@ function handleImageSelection(e) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // Low quality JPEG format
-        currentBase64Image = canvas.toDataURL('image/jpeg', 0.4);
+        currentBase64Image = canvas.toDataURL('image/jpeg', 0.3);
         document.getElementById('previewImg').src = currentBase64Image;
         document.getElementById('imgPreviewArea').classList.remove('hidden');
       };
@@ -172,12 +197,14 @@ async function processCurrentStep() {
   appendChat('user', (promptText || "Gina lambobi bisa hoton nan") + (currentBase64Image ? "<br>📷 <i>[An aiko tare da hoto]</i>" : ""));
   input.value = "";
 
-  appendChat('ai', "⏳ Engine tana aiwatar da gina fayil ɗin, dakata kadan...");
+  appendChat('ai', "⏳ Engine tana aiwatar da gina fayil ɗin full-stack, dakata kadan...");
 
   let payload = {
     message: promptText,
     image: currentBase64Image || null,
-    step: currentStep
+    step: currentStep,
+    supabaseUrl: supabaseUrl,
+    supabaseKey: supabaseKey
   };
 
   try {
@@ -200,13 +227,13 @@ async function processCurrentStep() {
 
       if (currentStep === 1) {
         projectFiles["login.html"] = extractedCode;
-        appendChat('ai', "✅ **An gina `login.html` da kyakkyawan tsarin shiga!**");
+        appendChat('ai', "✅ **An gina `login.html` mai haɗin authentication na gaske!**");
       } else if (currentStep === 2) {
         projectFiles["dashboard.html"] = extractedCode;
-        appendChat('ai', "✅ **An gina `dashboard.html` da dukkan sassan ikon sarrafawa!**");
+        appendChat('ai', "✅ **An gina `dashboard.html` mai dynamic database tables!**");
       } else if (currentStep === 3) {
         projectFiles["app.js"] = extractedCode;
-        appendChat('ai', "✅ **An gina `app.js` da cikakkun ayyukan maballai da logic!**");
+        appendChat('ai', "✅ **An gina `app.js` mai Supabase database integration!**");
       } else if (currentStep === 4) {
         projectFiles["style.css"] = extractedCode;
         appendChat('ai', "✅ **An gina `style.css` da gyaran kwalliya na karshe!**");
@@ -230,7 +257,7 @@ function goToNextStep() {
   } else if (currentStep === 3) {
     document.getElementById('stepLabel').innerText = "Mataki 3 daga 4: Tsarin Logic (`app.js`)";
     document.getElementById('fileBadge').innerText = "Fayiloli: 2 / 4";
-    appendChat('ai', "**MATAKI 3:** Bayyana yadda kake son maballan cikin app din su rika aiki. Zan samar da fayil din `app.js` na daban.");
+    appendChat('ai', "**MATAKI 3:** Bayyana yadda kake son maballan cikin app din su rika aiki tare da backend database. Zan samar da fayil din `app.js` na daban.");
   } else if (currentStep === 4) {
     document.getElementById('stepLabel').innerText = "Mataki 4 daga 4: Kwalliya & CSS (`style.css`)";
     document.getElementById('fileBadge').innerText = "Fayiloli: 3 / 4";
@@ -245,17 +272,16 @@ function showFinalDownloads() {
   const container = document.getElementById('finalDownloadArea');
   const list = document.getElementById('fileList');
   
-  // Sakawa kowanne fayil maballin View (don ganin app din live) da Download
   list.innerHTML = `
-    <div class="flex justify-between items-center py-1">
+    <div class="flex justify-between items-center py-1 border-b border-slate-800">
       <span>📄 login.html (${projectFiles["login.html"].length} chars)</span>
-      <button onclick="previewFile('login.html')" class="text-sky-400 underline">Gani (Preview)</button>
+      <button onclick="previewFile('login.html')" class="text-sky-400 font-bold hover:underline">Preview (Gani)</button>
     </div>
-    <div class="flex justify-between items-center py-1">
+    <div class="flex justify-between items-center py-1 border-b border-slate-800">
       <span>📄 dashboard.html (${projectFiles["dashboard.html"].length} chars)</span>
-      <button onclick="previewFile('dashboard.html')" class="text-sky-400 underline">Gani (Preview)</button>
+      <button onclick="previewFile('dashboard.html')" class="text-sky-400 font-bold hover:underline">Preview (Gani)</button>
     </div>
-    <div class="flex justify-between items-center py-1">
+    <div class="flex justify-between items-center py-1 border-b border-slate-800">
       <span>📜 app.js (${projectFiles["app.js"].length} chars)</span>
     </div>
     <div class="flex justify-between items-center py-1">
@@ -265,7 +291,6 @@ function showFinalDownloads() {
   container.classList.remove('hidden');
 }
 
-// Function din bude HTML din a matsayin gaske a tab daban
 function previewFile(fileName) {
   const htmlContent = projectFiles[fileName];
   if (htmlContent) {
@@ -295,12 +320,4 @@ function cleanCode(str) {
 </script>
 
 </body>
-</html><!-- SUPABASE CONFIGURATION BOX -->
-<div class="bg-slate-900 border border-slate-800 p-3 rounded-xl my-2 space-y-2">
-  <p class="text-xs text-emerald-400 font-bold">⚙️ Haɗa Backend Na Gaske (Supabase Settings):</p>
-  <div class="flex flex-col md:flex-row gap-2">
-    <input type="text" id="sbUrl" placeholder="Supabase Project URL (e.g. https://xyz.supabase.co)" class="bg-slate-950 text-xs p-2 rounded-lg border border-slate-800 flex-1 text-white">
-    <input type="text" id="sbKey" placeholder="Supabase Anon Key" class="bg-slate-950 text-xs p-2 rounded-lg border border-slate-800 flex-1 text-white">
-    <button onclick="saveSupabaseKeys()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-bold">Adana</button>
-  </div>
-</div>
+</html>
