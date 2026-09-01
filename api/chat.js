@@ -15,8 +15,8 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
     }
 
-    // Direct HTTP Request zuwa Google Gemini Flash API (Ba tare da SDK ba)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Amfani da model na `gemini-1.5-flash-latest` wanda aka amince da shi a v1beta REST API
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     let promptText = message || "Generate web app code for this step.";
     if (step === 1) promptText = `Generate valid raw HTML login layout with Tailwind CSS for: ${message || 'Login page'}`;
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // Aika buƙata kai tsaye ta fetch
+    // Aika buƙata ta REST Fetch
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: `❌ Google API Error: ${data.error.message}` });
     }
 
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
+    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
       const aiReply = data.candidates[0].content.parts[0].text;
       return res.status(200).json({ reply: aiReply });
     } else {
