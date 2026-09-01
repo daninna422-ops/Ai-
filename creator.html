@@ -244,13 +244,37 @@ function goToNextStep() {
 function showFinalDownloads() {
   const container = document.getElementById('finalDownloadArea');
   const list = document.getElementById('fileList');
+  
+  // Sakawa kowanne fayil maballin View (don ganin app din live) da Download
   list.innerHTML = `
-    📁 login.html (${projectFiles["login.html"].length} characters)<br>
-    📁 dashboard.html (${projectFiles["dashboard.html"].length} characters)<br>
-    📁 app.js (${projectFiles["app.js"].length} characters)<br>
-    📁 style.css (${projectFiles["style.css"].length} characters)
+    <div class="flex justify-between items-center py-1">
+      <span>📄 login.html (${projectFiles["login.html"].length} chars)</span>
+      <button onclick="previewFile('login.html')" class="text-sky-400 underline">Gani (Preview)</button>
+    </div>
+    <div class="flex justify-between items-center py-1">
+      <span>📄 dashboard.html (${projectFiles["dashboard.html"].length} chars)</span>
+      <button onclick="previewFile('dashboard.html')" class="text-sky-400 underline">Gani (Preview)</button>
+    </div>
+    <div class="flex justify-between items-center py-1">
+      <span>📜 app.js (${projectFiles["app.js"].length} chars)</span>
+    </div>
+    <div class="flex justify-between items-center py-1">
+      <span>🎨 style.css (${projectFiles["style.css"].length} chars)</span>
+    </div>
   `;
   container.classList.remove('hidden');
+}
+
+// Function din bude HTML din a matsayin gaske a tab daban
+function previewFile(fileName) {
+  const htmlContent = projectFiles[fileName];
+  if (htmlContent) {
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  } else {
+    alert("Babu kodi a cikin wannan fayil din!");
+  }
 }
 
 function downloadAllFiles() {
