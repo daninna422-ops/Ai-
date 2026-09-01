@@ -12,11 +12,11 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
+      return res.status(200).json({ reply: "❌ API Key ba ta samamu ba a Vercel Variables." });
     }
 
-    // Amfani da v1 stable endpoint maimakon v1beta
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Amfani da sabon model na gemini-3.6-flash wanda Google ke buqata yanzu
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     let promptText = message || "Generate web app code for this step.";
     if (step === 1) promptText = `Generate valid raw HTML login layout with Tailwind CSS for: ${message || 'Login page'}`;
@@ -51,22 +51,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (data.error) {
-      // Idan gemini-1.5-flash ya ba da matsala a v1, za mu sake gwada gemini-2.5-flash
-      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-      const fallbackResponse = await fetch(fallbackUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: parts }] })
-      });
-      const fallbackData = await fallbackResponse.json();
-
-      if (fallbackData.error) {
-        return res.status(200).json({ reply: `❌ Google API Error: ${fallbackData.error.message}` });
-      }
-
-      if (fallbackData.candidates && fallbackData.candidates[0]?.content?.parts[0]?.text) {
-        return res.status(200).json({ reply: fallbackData.candidates[0].content.parts[0].text });
-      }
+      return res.status(200).json({ reply: `❌ Google API Error: ${data.error.message}` });
     }
 
     if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
