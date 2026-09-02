@@ -315,7 +315,24 @@ function downloadAllFiles() {
 }
 
 function cleanCode(str) {
-  return str.replace(/^```(html|javascript|js|css)?\s*/i, '').replace(/```$/g, '').trim();
+  // Cire duk wani bayani na rubutu idan AI ta sa HTML block
+  if (str.includes('```html')) {
+    let code = str.split('```html')[1].split('```')[0];
+    return code.trim();
+  } else if (str.includes('```javascript')) {
+    let code = str.split('```javascript')[1].split('```')[0];
+    return code.trim();
+  } else if (str.includes('```js')) {
+    let code = str.split('```js')[1].split('```')[0];
+    return code.trim();
+  } else if (str.includes('```css')) {
+    let code = str.split('```css')[1].split('```')[0];
+    return code.trim();
+  } else if (str.includes('```')) {
+    let code = str.split('```')[1].split('```')[0];
+    return code.trim();
+  }
+  return str.trim();
 }
 </script>
 
