@@ -14,7 +14,8 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
+    // Amfani da stable model don gujewa cunkoson uwar garke
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     let systemContext = `STRICT RULE: Output ONLY functional executable code wrapped in standard markdown block. Do NOT write conversational intros.
     Use Supabase CDN (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2) for active database interaction.
@@ -24,13 +25,13 @@ export default async function handler(req, res) {
 
     let promptText = message || "Build functional code.";
     if (step === 1) {
-      promptText = `${systemContext}\nGenerate complete functional login.html with Tailwind CSS. Includes working Login/Register form, input IDs, and inline/external JS triggers connecting to Supabase Auth. Wrap strictly in \`\`\`html.`;
+      promptText = `${systemContext}\nGenerate complete functional login.html with Tailwind CSS based on user prompt: "${message}". Wrap strictly in \`\`\`html.`;
     }
     if (step === 2) {
-      promptText = `${systemContext}\nGenerate functional dashboard.html with Tailwind CSS. Include interactive modal popups for "Send", "Top Up", and "Bills" buttons. Wrap strictly in \`\`\`html.`;
+      promptText = `${systemContext}\nGenerate functional dashboard.html with Tailwind CSS based on user prompt: "${message}". Wrap strictly in \`\`\`html.`;
     }
     if (step === 3) {
-      promptText = `${systemContext}\nGenerate fully functional app.js. Initialize Supabase client using window.supabase.createClient('${supabaseUrl}', '${supabaseKey}'). Add event listeners for login forms, register forms, "Send Money", "Top Up", and balance fetching. Wrap strictly in \`\`\`javascript.`;
+      promptText = `${systemContext}\nGenerate fully functional app.js for Supabase Auth, OTP, PIN, and database interactions based on prompt: "${message}". Wrap strictly in \`\`\`javascript.`;
     }
     if (step === 4) {
       promptText = `${systemContext}\nGenerate CSS styling for style.css. Wrap strictly in \`\`\`css.`;
