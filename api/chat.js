@@ -14,8 +14,8 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
     }
 
-    // Amfani da tabbataccen model endpoint na gemini-2.5-flash
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // Amfani da sabon endpoint na gemini-3.6-flash
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     let systemContext = `STRICT RULE: Output ONLY functional executable code wrapped strictly in standard markdown block. Do NOT write conversational intros or prose.
     Use Supabase CDN (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2) for active database interaction.
