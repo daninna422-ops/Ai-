@@ -16,18 +16,25 @@ export default async function handler(req, res) {
 
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-    // System instruction don AI ta fitar da CODE kawai ba tare da conversational text ba
-    let systemContext = `STRICT RULE: Output ONLY the functional executable code block. Do NOT write any conversational intro or markdown explanations outside code blocks.
-    Use Supabase CDN ([https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)) for real backend storage.
+    let systemContext = `STRICT RULE: Output ONLY functional executable code wrapped in standard markdown block. Do NOT write conversational intros.
+    Use Supabase CDN (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2) for active database interaction.
     Supabase URL: ${supabaseUrl || 'YOUR_SUPABASE_URL'}
     Supabase Key: ${supabaseKey || 'YOUR_SUPABASE_ANON_KEY'}
-    `;
+    CRITICAL: Make ALL buttons interactive (attach onclick handlers, form submission handlers, dynamic data binding, and Supabase JS calls). Do not generate static unclickable buttons.`;
 
     let promptText = message || "Build functional code.";
-    if (step === 1) promptText = `${systemContext}\nGenerate pure runnable HTML for login.html with Tailwind CSS and live Supabase JS Auth. Wrap strictly in \`\`\`html code block.`;
-    if (step === 2) promptText = `${systemContext}\nGenerate pure runnable HTML for dashboard.html with Tailwind CSS and Supabase database query integration. Wrap strictly in \`\`\`html code block.`;
-    if (step === 3) promptText = `${systemContext}\nGenerate pure runnable JavaScript code for app.js handling Supabase signup, login, and database operations. Wrap strictly in \`\`\`javascript code block.`;
-    if (step === 4) promptText = `${systemContext}\nGenerate pure CSS styling for style.css. Wrap strictly in \`\`\`css code block.`;
+    if (step === 1) {
+      promptText = `${systemContext}\nGenerate complete functional login.html with Tailwind CSS. Includes working Login/Register form, input IDs, and inline/external JS triggers connecting to Supabase Auth. Wrap strictly in \`\`\`html.`;
+    }
+    if (step === 2) {
+      promptText = `${systemContext}\nGenerate functional dashboard.html with Tailwind CSS. Include interactive modal popups for "Send", "Top Up", and "Bills" buttons. Wrap strictly in \`\`\`html.`;
+    }
+    if (step === 3) {
+      promptText = `${systemContext}\nGenerate fully functional app.js. Initialize Supabase client using window.supabase.createClient('${supabaseUrl}', '${supabaseKey}'). Add event listeners for login forms, register forms, "Send Money", "Top Up", and balance fetching. Wrap strictly in \`\`\`javascript.`;
+    }
+    if (step === 4) {
+      promptText = `${systemContext}\nGenerate CSS styling for style.css. Wrap strictly in \`\`\`css.`;
+    }
 
     let parts = [{ text: promptText }];
 
