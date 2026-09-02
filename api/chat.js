@@ -14,27 +14,30 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
     }
 
-    // Amfani da sabon endpoint na gemini-3.6-flash
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-    let systemContext = `STRICT RULE: Output ONLY functional executable code wrapped strictly in standard markdown block. Do NOT write conversational intros or prose.
-    Use Supabase CDN (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2) for active database interaction.
-    Supabase URL: ${supabaseUrl || 'YOUR_SUPABASE_URL'}
-    Supabase Key: ${supabaseKey || 'YOUR_SUPABASE_ANON_KEY'}
-    CRITICAL: Make ALL buttons interactive (attach onclick handlers, form submission handlers, dynamic data binding, and Supabase JS calls). Do not generate static unclickable buttons.`;
+    let systemContext = `CRITICAL MANDATE:
+    1. DO NOT hardcode mock names (e.g. "Mubarak Ibrahim") or fake static balances (e.g. "150,000").
+    2. All data MUST come dynamically from Supabase JS client.
+    3. Include CDN for Supabase JS: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    4. Initialize Supabase: const supabase = window.supabase.createClient('${supabaseUrl || 'YOUR_SUPABASE_URL'}', '${supabaseKey || 'YOUR_SUPABASE_ANON_KEY'}');
+    5. On Register: Execute supabase.from('profiles').insert([{ full_name, phone, pin, balance: 0 }]) and auth signup.
+    6. On Login: Query Supabase profiles table, verify PIN/Phone, fetch REAL user name & dynamic balance.
+    7. On Transfer/TopUp: Update Supabase profiles balance & insert transaction history into Supabase 'transactions' table.
+    8. Output ONLY runnable code wrapped in markdown blocks.`;
 
-    let promptText = message || "Build functional code.";
+    let promptText = message || "Build functional dynamic code.";
     if (step === 1) {
-      promptText = `${systemContext}\nGenerate complete functional login.html with Tailwind CSS based on user prompt: "${message}". Wrap strictly in \`\`\`html.`;
+      promptText = `${systemContext}\nGenerate complete functional login.html with Tailwind CSS and full multi-step OTP/Registration UI connected directly to Supabase JS Auth & Database. Prompt: "${message}". Wrap in \`\`\`html.`;
     }
     if (step === 2) {
-      promptText = `${systemContext}\nGenerate functional dashboard.html with Tailwind CSS based on user prompt: "${message}". Wrap strictly in \`\`\`html.`;
+      promptText = `${systemContext}\nGenerate functional dashboard.html with Tailwind CSS. Include dynamic placeholders like <span id="userName">Cargando...</span> and <span id="userBalance">₦0.00</span> that will be populated dynamically from Supabase by app.js. Wrap in \`\`\`html.`;
     }
     if (step === 3) {
-      promptText = `${systemContext}\nGenerate fully functional app.js for Supabase Auth, OTP, PIN, and database interactions based on prompt: "${message}". Wrap strictly in \`\`\`javascript.`;
+      promptText = `${systemContext}\nGenerate fully functional app.js using active Supabase JS SDK. Implement real dynamic register, real login, fetch user profile (name, account number, balance), transfer money logic updating Supabase tables, and active button click event handlers. Prompt: "${message}". Wrap in \`\`\`javascript.`;
     }
     if (step === 4) {
-      promptText = `${systemContext}\nGenerate CSS styling for style.css. Wrap strictly in \`\`\`css.`;
+      promptText = `${systemContext}\nGenerate CSS styling for style.css. Wrap in \`\`\`css.`;
     }
 
     let parts = [{ text: promptText }];
