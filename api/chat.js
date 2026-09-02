@@ -16,18 +16,18 @@ export default async function handler(req, res) {
 
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-    // Prompt din da zai tilasta wa AI gina production-ready backend code
-    let systemContext = `You are a Senior Full-Stack Engineer. Do not build demo/mock code. Build real, production-ready web application code.
-    Use Supabase CDN script (https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2) for backend logic.
+    // System instruction don AI ta fitar da CODE kawai ba tare da conversational text ba
+    let systemContext = `STRICT RULE: Output ONLY the functional executable code block. Do NOT write any conversational intro or markdown explanations outside code blocks.
+    Use Supabase CDN ([https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)) for real backend storage.
     Supabase URL: ${supabaseUrl || 'YOUR_SUPABASE_URL'}
     Supabase Key: ${supabaseKey || 'YOUR_SUPABASE_ANON_KEY'}
     `;
 
-    let promptText = message || "Build functional app code.";
-    if (step === 1) promptText = `${systemContext}\nGenerate complete functional HTML for login.html using Tailwind CSS and Supabase JS auth methods.`;
-    if (step === 2) promptText = `${systemContext}\nGenerate responsive HTML for dashboard.html with Tailwind CSS and dynamic placeholders for real database data.`;
-    if (step === 3) promptText = `${systemContext}\nGenerate fully functional app.js utilizing Supabase client (supabase.auth.signUp, supabase.auth.signInWithPassword, and supabase.from('table').select/insert).`;
-    if (step === 4) promptText = `${systemContext}\nGenerate production-ready custom CSS styling for style.css.`;
+    let promptText = message || "Build functional code.";
+    if (step === 1) promptText = `${systemContext}\nGenerate pure runnable HTML for login.html with Tailwind CSS and live Supabase JS Auth. Wrap strictly in \`\`\`html code block.`;
+    if (step === 2) promptText = `${systemContext}\nGenerate pure runnable HTML for dashboard.html with Tailwind CSS and Supabase database query integration. Wrap strictly in \`\`\`html code block.`;
+    if (step === 3) promptText = `${systemContext}\nGenerate pure runnable JavaScript code for app.js handling Supabase signup, login, and database operations. Wrap strictly in \`\`\`javascript code block.`;
+    if (step === 4) promptText = `${systemContext}\nGenerate pure CSS styling for style.css. Wrap strictly in \`\`\`css code block.`;
 
     let parts = [{ text: promptText }];
 
