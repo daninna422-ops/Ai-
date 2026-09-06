@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Center Bank - Shiga & Yi Rijista</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b1329; color: #f8fafc; }
+    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .accent-gradient { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%); }
+    .input-field { background-color: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.15); color: #ffffff; }
+    .input-field:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+    .pin-box { width: 44px; height: 52px; font-size: 20px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+    <!-- Header Logo -->
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/20 text-blue-500 mb-3 border border-blue-500/30">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-white">Center Bank</h1>
+      <p class="text-xs text-slate-400 mt-1">Uwar garke na gaske tare da Supabase Database</p>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="flex bg-slate-900/80 p-1.5 rounded-2xl mb-6 border border-slate-800">
+      <button id="tabLoginBtn" onclick="switchTab('login')" class="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 accent-gradient text-white shadow-lg">Shiga (Login)</button>
+      <button id="tabRegisterBtn" onclick="switchTab('register')" class="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 text-slate-400 hover:text-white">Rijista (Register)</button>
+    </div>
+
+    <!-- Feedback Message Box -->
+    <div id="alertBox" class="hidden mb-4 p-3.5 rounded-xl text-xs font-medium border"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginFormSection" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Lambar Waya</label>
+        <div class="flex gap-2">
+          <select id="loginCountryCode" class="input-field rounded-xl px-3 py-3 text-sm font-medium">
+            <option value="+234">🇳🇬 +234</option>
+            <option value="+233">🇬🇭 +233</option>
+            <option value="+254">🇰🇪 +254</option>
+            <option value="+27">🇿🇦 +27</option>
+          </select>
+          <input type="tel" id="loginPhone" placeholder="8012345678" class="input-field flex-1 rounded-xl px-4 py-3 text-sm">
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="text-xs font-semibold text-slate-300">PIN Na Tabbatarwa (6-Digit)</label>
+          <a href="#" onclick="alert('Za a tura muku saƙo ta WhatsApp ko SMS don sake saita PIN.')" class="text-xs text-blue-400 hover:underline">Ka manta PIN?</a>
+        </div>
+        <input type="password" id="loginPin" maxlength="6" placeholder="••••••" class="input-field w-full rounded-xl px-4 py-3 text-sm tracking-widest font-mono text-center">
+      </div>
+
+      <button onclick="handleLogin()" id="loginSubmitBtn" class="w-full accent-gradient hover:opacity-90 text-white font-bold py-3.5 rounded-xl text-sm shadow-lg transition-all mt-2 flex justify-center items-center gap-2">
+        <span>Shiga Dashboard</span>
+      </button>
+    </div>
+
+    <!-- REGISTER MULTI-STEP FORM -->
+    <div id="registerFormSection" class="hidden space-y-4">
+      <!-- Step 1: Personal Info -->
+      <div id="regStep1" class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Suna</label>
+            <input type="text" id="regFirstName" placeholder="Mubarak" class="input-field w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Sunan Mahaifi</label>
+            <input type="text" id="regLastName" placeholder="Ibrahim" class="input-field w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Lambar Waya</label>
+          <div class="flex gap-2">
+            <select id="regCountryCode" class="input-field rounded-xl px-2 py-2.5 text-xs font-medium">
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+233">🇬🇭 +233</option>
+              <option value="+254">🇰🇪 +254</option>
+            </select>
+            <input type="tel" id="regPhone" placeholder="8012345678" class="input-field flex-1 rounded-xl px-3 py-2.5 text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">NIN ko BVN</label>
+            <input type="number" id="regNinBvn" placeholder="22334455667" class="input-field w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Saita PIN (6-Digit)</label>
+            <input type="password" id="regPin" maxlength="6" placeholder="••••••" class="input-field w-full rounded-xl px-3 py-2.5 text-sm text-center font-mono">
+          </div>
+        </div>
+
+        <button onclick="goToOtpStep()" class="w-full accent-gradient text-white font-bold py-3 rounded-xl text-sm mt-2">Cigaba Wajen OTP →</button>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="regStep2" class="hidden space-y-4 text-center">
+        <p class="text-xs text-slate-300">An tura saƙon OTP zuwa layinka <span id="displayTargetPhone" class="text-blue-400 font-bold"></span></p>
+        
+        <div class="flex justify-center gap-2 my-2">
+          <input type="text" maxlength="1" class="pin-box input-field rounded-xl" onkeyup="moveOtpFocus(this, 1)">
+          <input type="text" maxlength="1" class="pin-box input-field rounded-xl" onkeyup="moveOtpFocus(this, 2)">
+          <input type="text" maxlength="1" class="pin-box input-field rounded-xl" onkeyup="moveOtpFocus(this, 3)">
+          <input type="text" maxlength="1" class="pin-box input-field rounded-xl" onkeyup="moveOtpFocus(this, 4)">
+        </div>
+
+        <div class="text-xs text-slate-400">
+          Sauran Lokaci: <span id="timerDisplay" class="text-amber-400 font-bold">00:60</span>
+        </div>
+
+        <button id="resendOtpBtn" disabled onclick="startOtpTimer()" class="text-xs text-blue-400 disabled:opacity-50 hover:underline">Sake Tura OTP</button>
+
+        <button onclick="verifyAndFinishRegister()" id="regFinalBtn" class="w-full accent-gradient text-white font-bold py-3 rounded-xl text-sm shadow-lg">
+          Tabbatar & Kamammala Rijista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration from Supabase settings
+    const SUPABASE_URL = localStorage.getItem('CENTER_SUPABASE_URL') || '';
+    const SUPABASE_ANON_KEY = localStorage.getItem('CENTER_SUPABASE_KEY') || '';
+    let supabaseClient = null;
+
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    let timerInterval = null;
+
+    function showAlert(msg, isError = true) {
+      const box = document.getElementById('alertBox');
+      box.classList.remove('hidden', 'bg-red-500/20', 'border-red-500/40', 'text-red-300', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      if (isError) {
+        box.classList.add('bg-red-500/20', 'border-red-500/40', 'text-red-300');
+      } else {
+        box.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      }
+      box.innerText = msg;
+    }
+
+    function switchTab(type) {
+      document.getElementById('alertBox').classList.add('hidden');
+      if (type === 'login') {
+        document.getElementById('loginFormSection').classList.remove('hidden');
+        document.getElementById('registerFormSection').classList.add('hidden');
+        document.getElementById('tabLoginBtn').className = "flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 accent-gradient text-white shadow-lg";
+        document.getElementById('tabRegisterBtn').className = "flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 text-slate-400 hover:text-white";
+      } else {
+        document.getElementById('loginFormSection').classList.add('hidden');
+        document.getElementById('registerFormSection').classList.remove('hidden');
+        document.getElementById('tabRegisterBtn').className = "flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 accent-gradient text-white shadow-lg";
+        document.getElementById('tabLoginBtn').className = "flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 text-slate-400 hover:text-white";
+      }
+    }
+
+    function moveOtpFocus(elem, nextIdx) {
+      if (elem.value.length >= elem.maxLength) {
+        const next = elem.parentElement.children[nextIdx];
+        if (next) next.focus();
+      }
+    }
+
+    function startOtpTimer() {
+      let seconds = 60;
+      const timerElem = document.getElementById('timerDisplay');
+      const resendBtn = document.getElementById('resendOtpBtn');
+      resendBtn.disabled = true;
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        seconds--;
+        timerElem.innerText = `00:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (seconds <= 0) {
+          clearInterval(timerInterval);
+          resendBtn.disabled = false;
+          timerElem.innerText = "Lokaci ya ƙare";
+        }
+      }, 1000);
+    }
+
+    function goToOtpStep() {
+      const fname = document.getElementById('regFirstName').value.trim();
+      const lname = document.getElementById('regLastName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const pin = document.getElementById('regPin').value.trim();
+
+      if (!fname || !lname || !phone || !pin) {
+        showAlert("Cika duk wuraren da ake buƙata kamin cigaba!");
+        return;
+      }
+      if (pin.length !== 6) {
+        showAlert("PIN ɗinka dole ne ya kasance lambobi 6!");
+        return;
+      }
+
+      document.getElementById('displayTargetPhone').innerText = document.getElementById('regCountryCode').value + phone;
+      document.getElementById('regStep1').classList.add('hidden');
+      document.getElementById('regStep2').classList.remove('hidden');
+      startOtpTimer();
+      showAlert("An aika OTP na gwaji (Saka 1234 don tabbatarwa)", false);
+    }
+
+    async function verifyAndFinishRegister() {
+      const codeInputs = document.querySelectorAll('#regStep2 .pin-box');
+      let enteredOtp = "";
+      codeInputs.forEach(i => enteredOtp += i.value);
+
+      if (enteredOtp !== "1234") {
+        showAlert("Lambar OTP ba daidai ba ce! Sake gwadawa.");
+        return;
+      }
+
+      const fname = document.getElementById('regFirstName').value.trim();
+      const lname = document.getElementById('regLastName').value.trim();
+      const fullPhone = document.getElementById('regCountryCode').value + document.getElementById('regPhone').value.trim();
+      const pin = document.getElementById('regPin').value.trim();
+      const nin = document.getElementById('regNinBvn').value.trim();
+      const accNum = "312" + Math.floor(1000000 + Math.random() * 9000000);
+
+      if (!supabaseClient) {
+        showAlert("Supabase Keys ba su haɗu ba! An adana a ma'adanar gida (Local Storage).", false);
+        localStorage.setItem('LOGGED_IN_USER', JSON.stringify({ full_name: fname + " " + lname, phone: fullPhone, account_number: accNum, balance: 5000 }));
+        setTimeout(() => window.location.href = "dashboard.html", 1500);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient.from('profiles').insert([
+          { full_name: `${fname} ${lname}`, phone: fullPhone, pin: pin, account_number: accNum, balance: 1000.00 }
+        ]);
+
+        if (error) {
+          showAlert("Kuskuren Database: " + error.message);
+        } else {
+          showAlert("Rijista ta kammala cikin nasara! Za a wuce da kai dashboard...", false);
+          localStorage.setItem('LOGGED_IN_USER', JSON.stringify({ full_name: `${fname} ${lname}`, phone: fullPhone, account_number: accNum, balance: 1000.00 }));
+          setTimeout(() => window.location.href = "dashboard.html", 1500);
+        }
+      } catch (err) {
+        showAlert("Maza-Maza Error: " + err.message);
+      }
+    }
+
+    async function handleLogin() {
+      const fullPhone = document.getElementById('loginCountryCode').value + document.getElementById('loginPhone').value.trim();
+      const pin = document.getElementById('loginPin').value.trim();
+
+      if (!fullPhone || !pin) {
+        showAlert("Saka lambar waya da PIN din shiga!");
+        return;
+      }
+
+      if (!supabaseClient) {
+        showAlert("Rijista ta gida (Simulated Login)...", false);
+        localStorage.setItem('LOGGED_IN_USER', JSON.stringify({ full_name: "Uba Sani", phone: fullPhone, account_number: "3120485921", balance: 25000 }));
+        setTimeout(() => window.location.href = "dashboard.html", 1200);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient.from('profiles').select('*').eq('phone', fullPhone).eq('pin', pin).single();
+
+        if (error || !data) {
+          showAlert("Lambar waya ko PIN ba daidai ba ne!");
+        } else {
+          showAlert("Sannu da zuwa " + data.full_name, false);
+          localStorage.setItem('LOGGED_IN_USER', JSON.stringify(data));
+          setTimeout(() => window.location.href = "dashboard.html", 1200);
+        }
+      } catch (err) {
+        showAlert("Kuskuren Shiga: " + err.message);
+      }
+    }
+  </script>
+</body>
+          </html>
