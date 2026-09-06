@@ -4,37 +4,24 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(200).json({ reply: "POST requests kawai." });
 
   try {
-    const { message, step, supabaseUrl, supabaseKey } = req.body;
+    const { message, step, termiiApiKey, supabaseUrl, supabaseKey } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!apiKey) {
-      return res.status(200).json({ reply: "❌ API Key ba ta samamu ba." });
-    }
+    if (!apiKey) return res.status(200).json({ reply: "❌ Saka GEMINI_API_KEY a Vercel!" });
 
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-    let systemContext = `STRICT RULE: Output ONLY runnable code inside markdown blocks.
-    Supabase URL: ${supabaseUrl || 'YOUR_SUPABASE_URL'}
-    Supabase Key: ${supabaseKey || 'YOUR_SUPABASE_ANON_KEY'}
-    MUST include <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> inside HTML.
-    MUST include complete embedded working JavaScript script tag at the bottom of login.html to handle register & login directly with Supabase. Do not cut off the JS script tag.`;
+    let systemRule = `STRICT MANDATE:
+    1. For OTP verification, DO NOT use mock static OTP like '1234'.
+    2. Integrate Termii SMS API endpoint (https://api.ng.termii.com/api/sms/send) to send real 6-digit OTP code to user's phone via SMS.
+    3. Generate dynamic 6-digit OTP code using Math.floor(100000 + Math.random() * 900000).
+    4. Store generated OTP in JavaScript variable or localStorage to compare with user input.
+    5. Termii API Key: ${termiiApiKey || 'YOUR_TERMII_API_KEY'}
+    6. All user details must save into Supabase DB directly on verified OTP.`;
 
-    let promptText = message || "Build dynamic code.";
-    if (step === 1) {
-      promptText = `${systemContext}\nGenerate lean functional login.html with Tailwind CSS and full functional Supabase Auth/Profiles JS script attached at the bottom. Prompt: "${message}". Wrap in \`\`\`html.`;
-    }
-    if (step === 2) {
-      promptText = `${systemContext}\nGenerate functional dynamic dashboard.html with Tailwind CSS. Wrap in \`\`\`html.`;
-    }
-    if (step === 3) {
-      promptText = `${systemContext}\nGenerate app.js for fetching real user profiles and balance from Supabase. Wrap in \`\`\`javascript.`;
-    }
-    if (step === 4) {
-      promptText = `${systemContext}\nGenerate style.css. Wrap in \`\`\`css.`;
-    }
+    let promptText = `${systemRule}\nTask: Generate dynamic single file code for step ${step}. Prompt: ${message}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -43,18 +30,11 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "❌ Ba a samu lambobin kodi ba.";
 
-    if (data.error) {
-      return res.status(200).json({ reply: `❌ API Error: ${data.error.message}` });
-    }
-
-    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-      return res.status(200).json({ reply: data.candidates[0].content.parts[0].text });
-    } else {
-      return res.status(200).json({ reply: "❌ Engine ba ta iya samar da lambobin code ba." });
-    }
+    return res.status(200).json({ reply: replyText });
 
   } catch (error) {
-    return res.status(200).json({ reply: `❌ Fetch Error: ${error.message}` });
+    return res.status(200).json({ reply: `❌ Error: ${error.message}` });
   }
 }
