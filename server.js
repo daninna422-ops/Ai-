@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
@@ -6,10 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Saka Paystack Secret Key dinka a nan
-const pk_test_840e43fa933f08f107c7f3f38316916d33a81eea"; 
+// Karanta Secret Key daga .env file
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 
-// 1. Route din Duba Suna da Lambar Banki (Account Resolution)
+// Route 1: Duba Sunan Banki (Account Name Resolution)
 app.post('/api/resolve-account', async (req, res) => {
     const { accountNumber, bankCode } = req.body;
     try {
@@ -19,28 +20,49 @@ app.post('/api/resolve-account', async (req, res) => {
         );
         res.json({ success: true, data: response.data.data });
     } catch (error) {
-        res.status(400).json({ success: false, message: "Ba a samu sunan asusun ba." });
+        res.status(400).json({ success: false, message: "Ba a samu asusun ba." });
     }
 });
 
-// 2. Route din Tura Ainihin Kudi zuwa wani Bankin (Real Transfer)
+// Route 2: Kirkiro Transfer Recipient & Tura Kudi (Transfer)
 app.post('/api/transfer', async (req, res) => {
-    const { recipientCode, amountInNaira } = req.body;
+    const { accountNumber, bankCode, accountName, amountInNaira } = req.body;
     try {
-        const response = await axios.post(
-            'https://api.paystack.co/transfer',
+        // Step A: Yi Recipient Code a Paystack
+        const recipientRes = await axios.post(
+            'https://api.paystack.co/transferrecipient',
             {
-                source: "balance",
-                amount: amountInNaira * 100, // Paystack yana lissafi a Kobo
-                recipient: recipientCode,
-                reason: "Tura kudi daga MMA Bank"
+                type: "nuban",
+                name: accountName,
+                account_number: accountNumber,
+                bank_code: bankCode,
+                currency: "NGN"
             },
             { headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` } }
         );
-        res.json({ success: true, data: response.data });
+
+        const recipientCode = recipientRes.data.data.recipient_code;
+
+        // Step B: Tura Kudin
+        const transferRes = await axios.post(
+            'https://api.paystack.co/transfer',
+            {
+                source: "balance",
+                amount: amountInNaira * 100, // Paystack yana amfani da Kobo
+                recipient: recipientCode,
+                reason: "Tura kudi daga App"
+            },
+            { headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` } }
+        );
+
+        res.json({ success: true, data: transferRes.data });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.response?.data?.message || "Tura kudin ba yiyi ba." });
+        res.status(500).json({ 
+            success: false, 
+            message: error.response?.data?.message || "Tura kudin ba yiyi ba." 
+        });
     }
 });
 
-app.listen(3000, () => console.log('Server din MMA Bank tana aiki a port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server tana aiki a port ${PORT}`));
